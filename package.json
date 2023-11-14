@@ -9,10 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-three/cannon": "^6.6.0",
+    "@react-three/drei": "^9.83.9",
+    "@react-three/fiber": "^8.14.2",
+    "@react-three/postprocessing": "^2.15.1",
     "eslint": "8.49.0",
     "eslint-config-next": "13.4.19",
-    "next": "13.4.19",
+    "leva": "^0.9.35",
+    "next": "latest",
+    "prop-types": "^15.8.1",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "styled-components": "^6.1.0",
+    "three": "^0.156.1",
+    "three-stdlib": "^2.26.3"
   }
 }
