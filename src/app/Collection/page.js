@@ -17,16 +17,17 @@ import { GachaSphere, CollectionSpheres } from '../../components/GachaSphere'
 import { GachaTetrahedron, CollectionTetrahedrons } from '../../components/GachaTetrahedron'
 import { Ground } from '../../components/Ground'
 import { TexturedGround } from '../../components/TexturedGround'
+import { GachaScene } from '../../components/GachaScene'
 import { Physics } from '@react-three/cannon'
 
 export default function Home() {
-  const [scene, setScene] = useState({ name: "collection", url: null, type: null })
+  const [scene, setScene] = useState({ name: "gacha", url: null, type: null })
   const cameraConfig = { position: [0, 10, 0], fov: 30, near: 1, far: 100, minDistance: 3, maxDistance: 10 }
   return (
     <>
       <Canvas shadows dpr={[1, 2]} gl={{ alpha: false }} >
         <PerspectiveCamera {...cameraConfig} />
-        <color attach="background" args={['#FFE4D1']} />
+        <color attach="background" args={['white']} />
 
         <ambientLight />
         <directionalLight position={[5, 12, 10]} castShadow shadow-mapSize={[2048, 2048]} />
@@ -53,6 +54,8 @@ function ChooseScene({ scene, setScene }) {
   let componentScene = <CollectionScene urlList={urlList} setScene={setScene} />
   if (scene.name === 'focus') {
     componentScene = <FocusScene url={scene.url} type={scene.type} setScene={setScene} />
+  } else if (scene.name === 'gacha') {
+    componentScene = <GachaScene />
   }
   return componentScene
 }
