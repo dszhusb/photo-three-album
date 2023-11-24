@@ -10,7 +10,7 @@ import { OrbitControls } from '@react-three/drei'
 import { useControls } from 'leva'
 
 import { randPos, randRot } from '../../components/CollectionUtils'
-import { OverlayPara } from './OverlayStyles'
+import { Overlay } from '../../components/Overlay'
 
 import { GachaCube, CollectionCubes } from '../../components/GachaCube'
 import { GachaSphere, CollectionSpheres } from '../../components/GachaSphere'
@@ -40,22 +40,13 @@ export default function Home() {
   )
 }
 
-function Overlay({ setScene }) {
-  return (
-    <>
-      <OverlayPara onClick={() => setScene('collection')} style={{ top: 40, left: 40 }}>Collection</OverlayPara>
-      <OverlayPara style={{ bottom: 40, right: 40 }}>Paramecium</OverlayPara>
-    </>
-  )
-}
-
 function ChooseScene({ scene, setScene }) {
   const urlList = ['/hair.png', '/lemon.png', '/clip.png']
   let componentScene = <CollectionScene urlList={urlList} setScene={setScene} />
   if (scene.name === 'focus') {
     componentScene = <FocusScene url={scene.url} type={scene.type} setScene={setScene} />
   } else if (scene.name === 'gacha') {
-    componentScene = <GachaScene />
+    componentScene = <GachaScene setScene={setScene} />
   }
   return componentScene
 }
@@ -87,7 +78,7 @@ function CollectionScene({ urlList, setScene }) {
       <Ground position={[0, -1, 0]} />
       <CollectionCubes urlList={urlList} setScene={setScene} posRotList={posRotList.slice(0, urlList.length)} />
       <CollectionTetrahedrons urlList={urlList} setScene={setScene} posRotList={posRotList.slice(urlList.length)} />
-      {/* <CollectionSpheres urlList={urlList} setScene={setScene} posRotList={posRotList.slice(urlList.length)} /> */}
+      <CollectionSpheres urlList={urlList} setScene={setScene} posRotList={posRotList.slice(urlList.length)} />
     </Physics>
   )
 }
