@@ -1,13 +1,25 @@
 import PropTypes from 'prop-types'
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useMemo } from 'react'
 import { useLoader } from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
-import { useBox, useSphere} from '@react-three/cannon'
+import { useConvexPolyhedron } from '@react-three/cannon'
+import { MeshTransmissionMaterial } from '@react-three/drei'
+import { tetraMaterial } from './PhysicsMaterials'
+import { Geometry } from 'three-stdlib'
+import * as THREE from 'three'
 
 export { GachaTetrahedron, CollectionTetrahedrons }
 
 function GachaTetrahedron({ position, rotation, setScene, url, isClickable }) {
-    const [ref] = useBox(() => ({ mass: 1, position: position, rotation: rotation, radius: 0.5 }))
+
+    const geo = useMemo(() => {
+        const g = new THREE.TetrahedronGeometry()
+        const geo = new Geometry().fromBufferGeometry(g)
+        geo.mergeVertices()
+        return [geo.vertices.map((v) => [v.x, v.y, v.z]), geo.faces.map((f) => [f.a, f.b, f.c]), []]
+    }, [])
+
+    const [ref] = useConvexPolyhedron(() => ({ mass: 1, position: position, rotation: rotation, material: tetraMaterial, args: geo }))
     const [hovered, hover] = useState(false)
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
@@ -17,13 +29,20 @@ function GachaTetrahedron({ position, rotation, setScene, url, isClickable }) {
         setScene({ name: 'focus', url: url, type: 'tetrahedron' })
     }
 
-    const mesh = <mesh ref={ref} castShadow receiveShadow
-        onClick={() => handleClick()}
-        onPointerOver={(event) => (event.stopPropagation(), hover(true))}
-        onPointerOut={() => hover(false)}>
-        <tetrahedronGeometry />
-        <meshLambertMaterial color={hovered && isClickable ? 'blue' : '#ffffff'} map={colorMap} />
-    </mesh>
+    const mesh =
+        <mesh ref={ref} dispose={null} castShadow receiveShadow onClick={() => handleClick()} onPointerOver={(event) => (event.stopPropagation(), hover(true))} onPointerOut={() => hover(false)}>
+            <tetrahedronGeometry />
+            <MeshTransmissionMaterial
+                color={hovered && isClickable ? 'blue' : '#ffffff'}
+                map={colorMap}
+                resolution={1024}
+                clearcoat={1}
+                roughness={0.35}
+                distortion={1}
+                thickness={0.5}
+                opacity={0.5}
+            />
+        </mesh>
 
     return mesh
 }

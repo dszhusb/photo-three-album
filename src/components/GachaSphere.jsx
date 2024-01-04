@@ -3,11 +3,13 @@ import { Suspense, useState } from 'react'
 import { useLoader } from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { useSphere } from '@react-three/cannon'
+import { MeshWobbleMaterial } from '@react-three/drei'
+import { sphereMaterial } from './PhysicsMaterials'
 
 export { GachaSphere, CollectionSpheres }
 
 function GachaSphere({ position, rotation, setScene, url, isClickable }) {
-    const [ref] = useSphere(() => ({ mass: 1, position: position, rotation: rotation, radius: 0.5 }))
+    const [ref] = useSphere(() => ({ mass: 1, position: position, rotation: rotation, radius: 0.5, material: sphereMaterial, angularDamping: 0.75 }))
     const [hovered, hover] = useState(false)
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
@@ -17,13 +19,15 @@ function GachaSphere({ position, rotation, setScene, url, isClickable }) {
         setScene({ name: 'focus', url: url, type: 'sphere' })
     }
 
-    const mesh = <mesh ref={ref} castShadow receiveShadow
-        onClick={() => handleClick()}
-        onPointerOver={(event) => (event.stopPropagation(), hover(true))}
-        onPointerOut={() => hover(false)}>
-        <sphereGeometry />
-        <meshLambertMaterial color={hovered && isClickable ? 'purple' : '#ffffff'} map={colorMap} />
-    </mesh>
+    const mesh =
+        <mesh ref={ref} castShadow receiveShadow
+            onClick={() => handleClick()}
+            onPointerOver={(event) => (event.stopPropagation(), hover(true))}
+            onPointerOut={() => hover(false)}>
+            <sphereGeometry />
+            <MeshWobbleMaterial map={colorMap} />
+            {/* <meshLambertMaterial color={hovered && isClickable ? 'purple' : '#ffffff'} map={colorMap} /> */}
+        </mesh>
 
     return mesh
 }

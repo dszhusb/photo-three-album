@@ -1,5 +1,8 @@
-import React, { useState } from "react";
-import { useGLTF } from "@react-three/drei";
+import React, { useState } from "react"
+import * as THREE from 'three'
+import { useLoader } from '@react-three/fiber'
+import { RGBELoader } from 'three-stdlib'
+import { useGLTF, Caustics, MeshTransmissionMaterial } from "@react-three/drei"
 
 export function Model(props) {
     const { nodes, materials } = useGLTF("/models/gacha.glb")
@@ -7,28 +10,8 @@ export function Model(props) {
     const [hovered, hover] = useState(false)
     const [clicked, click] = useState(false)
 
-    const glassMaterial = <meshPhysicalMaterial
-        color={'white'}
-        metalness={0.9}
-        roughness={0.05}
-        envMapIntensity={0.9}
-        clearcoat={1}
-        transparent
-        opacity={0.5}
-        reflectivity={0.2}
-        refractionRatio={0.985}
-        transmission={0.95}
-        iridescence={1}
-        ior={0.9}
-    />
-
-    const plasticMaterial = <meshPhysicalMaterial clearcoat={1} clearcoatRoughness={0} metalness={0.5} color={'white'} />
-    const knobMaterial = <meshPhysicalMaterial
-        clearcoat={1}
-        clearcoatRoughness={1}
-        metalness={0.5}
-        color={hovered ? 'blue' : '#d1d1d1'}
-    />
+    const plasticMaterial = <meshPhysicalMaterial receiveShadow color={0xffffff} roughness={0}  />
+    const knobMaterial = <meshNormalMaterial/>
 
     function handleClick() {
         click(!clicked)
@@ -37,16 +20,18 @@ export function Model(props) {
 
     return (
         <group {...props} dispose={null}>
-            <mesh
-                castShadow
-                receiveShadow
-                geometry={nodes.Cylinder002.geometry}
-                position={[-0.75, 1.6, 0]}
-                rotation={[Math.PI / 2, 0, 0]}
-                scale={[1, 1.001, 1]}
-            >
-                {glassMaterial}
-            </mesh>
+            <Caustics color="#9ccdff" lightSource={[5, 5, -10]} worldRadius={0.01} ior={1.2} intensity={0.005}>
+                <mesh
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Cylinder002.geometry}
+                    position={[-0.75, 1.6, 0]}
+                    rotation={[Math.PI / 2, 0, 0]}
+                    scale={[1, 1.001, 1]}
+                >
+                    <MeshTransmissionMaterial resolution={1024} distortion={0.25} color="#9ccdff" thickness={1} anisotropy={1} chromaticAbberation={1} />
+                </mesh>
+            </Caustics>
             <mesh
                 castShadow
                 receiveShadow

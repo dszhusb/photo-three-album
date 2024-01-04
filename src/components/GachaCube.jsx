@@ -3,11 +3,12 @@ import { Suspense, useState } from 'react'
 import { useLoader } from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { useBox } from '@react-three/cannon'
+import { cubeMaterial } from './PhysicsMaterials'
 
 export { GachaCube, CollectionCubes }
 
 function GachaCube({ position, rotation, setScene, url, isClickable }) {
-    const [ref] = useBox(() => ({ mass: 1, position: position, rotation: rotation }))
+    const [ref] = useBox(() => ({ mass: 1, position: position, rotation: rotation, material: cubeMaterial }))
     const [hovered, hover] = useState(false)
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
@@ -17,13 +18,11 @@ function GachaCube({ position, rotation, setScene, url, isClickable }) {
         setScene({ name: 'focus', url: url, type: 'cube' })
     }
 
-    const mesh = <mesh ref={ref} castShadow receiveShadow
-        onClick={() => handleClick()}
-        onPointerOver={(event) => (event.stopPropagation(), hover(true))}
-        onPointerOut={() => hover(false)}>
-        <boxGeometry />
-        <meshPhysicalMaterial color={hovered && isClickable ? 'blue' : '#ffffff'} map={colorMap} reflectivity={1} metalness={0.5} iridescense={1} roughness={0} clearcoat={1} clearcoatRoughness={0} />
-    </mesh>
+    const mesh =
+        <mesh ref={ref} castShadow receiveShadow onClick={() => handleClick()} onPointerOver={(event) => (event.stopPropagation(), hover(true))} onPointerOut={() => hover(false)}>
+            <boxGeometry />
+            <meshStandardMaterial map={colorMap} />
+        </mesh>
 
     return mesh
 }
