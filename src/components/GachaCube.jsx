@@ -7,9 +7,8 @@ import { cubeMaterial } from './PhysicsMaterials'
 
 export { GachaCube, CollectionCubes }
 
-function GachaCube({ position, rotation, setScene, url, isClickable }) {
+function GachaCube({ position, rotation, setScene, url }) {
     const [ref] = useBox(() => ({ mass: 1, position: position, rotation: rotation, material: cubeMaterial }))
-    const [hovered, hover] = useState(false)
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
 
@@ -19,7 +18,7 @@ function GachaCube({ position, rotation, setScene, url, isClickable }) {
     }
 
     const mesh =
-        <mesh ref={ref} castShadow receiveShadow onClick={() => handleClick()} onPointerOver={(event) => (event.stopPropagation(), hover(true))} onPointerOut={() => hover(false)}>
+        <mesh ref={ref} castShadow receiveShadow onClick={() => handleClick()} >
             <boxGeometry />
             <meshStandardMaterial map={colorMap} />
         </mesh>

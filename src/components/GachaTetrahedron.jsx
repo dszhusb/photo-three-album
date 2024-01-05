@@ -3,14 +3,14 @@ import { Suspense, useState, useMemo } from 'react'
 import { useLoader } from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { useConvexPolyhedron } from '@react-three/cannon'
-import { MeshTransmissionMaterial } from '@react-three/drei'
+import { GlassMaterial } from './GachaMaterials'
 import { tetraMaterial } from './PhysicsMaterials'
 import { Geometry } from 'three-stdlib'
 import * as THREE from 'three'
 
 export { GachaTetrahedron, CollectionTetrahedrons }
 
-function GachaTetrahedron({ position, rotation, setScene, url, isClickable }) {
+function GachaTetrahedron({ position, rotation, setScene, url }) {
 
     const geo = useMemo(() => {
         const g = new THREE.TetrahedronGeometry()
@@ -20,9 +20,9 @@ function GachaTetrahedron({ position, rotation, setScene, url, isClickable }) {
     }, [])
 
     const [ref] = useConvexPolyhedron(() => ({ mass: 1, position: position, rotation: rotation, material: tetraMaterial, args: geo }))
-    const [hovered, hover] = useState(false)
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
+    const material = <GlassMaterial colorMap={colorMap} />
 
     function handleClick() {
         click(!clicked)
@@ -30,18 +30,9 @@ function GachaTetrahedron({ position, rotation, setScene, url, isClickable }) {
     }
 
     const mesh =
-        <mesh ref={ref} dispose={null} castShadow receiveShadow onClick={() => handleClick()} onPointerOver={(event) => (event.stopPropagation(), hover(true))} onPointerOut={() => hover(false)}>
+        <mesh ref={ref} dispose={null} castShadow receiveShadow onClick={() => handleClick()} >
             <tetrahedronGeometry />
-            <MeshTransmissionMaterial
-                color={hovered && isClickable ? 'blue' : '#ffffff'}
-                map={colorMap}
-                resolution={1024}
-                clearcoat={1}
-                roughness={0.35}
-                distortion={1}
-                thickness={0.5}
-                opacity={0.5}
-            />
+            {material}
         </mesh>
 
     return mesh

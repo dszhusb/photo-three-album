@@ -3,16 +3,16 @@ import { Suspense, useState } from 'react'
 import { useLoader } from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { useSphere } from '@react-three/cannon'
-import { MeshWobbleMaterial } from '@react-three/drei'
+import { DropletMaterial } from './GachaMaterials'
 import { sphereMaterial } from './PhysicsMaterials'
 
 export { GachaSphere, CollectionSpheres }
 
-function GachaSphere({ position, rotation, setScene, url, isClickable }) {
-    const [ref] = useSphere(() => ({ mass: 1, position: position, rotation: rotation, radius: 0.5, material: sphereMaterial, angularDamping: 0.75 }))
-    const [hovered, hover] = useState(false)
+function GachaSphere({ position, rotation, setScene, url }) {
+    const [ref] = useSphere(() => ({ mass: 1, position: position, rotation: rotation, radius: 0.5, material: sphereMaterial, angularDamping: 0.9 }))
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
+    const material = <DropletMaterial colorMap={colorMap} />
 
     function handleClick() {
         click(!clicked)
@@ -20,13 +20,9 @@ function GachaSphere({ position, rotation, setScene, url, isClickable }) {
     }
 
     const mesh =
-        <mesh ref={ref} castShadow receiveShadow
-            onClick={() => handleClick()}
-            onPointerOver={(event) => (event.stopPropagation(), hover(true))}
-            onPointerOut={() => hover(false)}>
+        <mesh ref={ref} castShadow receiveShadow onClick={() => handleClick()} >
             <sphereGeometry />
-            <MeshWobbleMaterial map={colorMap} />
-            {/* <meshLambertMaterial color={hovered && isClickable ? 'purple' : '#ffffff'} map={colorMap} /> */}
+            {material}
         </mesh>
 
     return mesh
@@ -51,13 +47,7 @@ function CollectionSpheres({ urlList, setScene, posRotList }) {
     return (
         <Suspense fallback={null}>
             {urlList.map((url, index) => {
-                return <GachaSphere
-                    url={url}
-                    key={url + index}
-                    position={posRotList[index].pos}
-                    rotation={posRotList[index].rot}
-                    setScene={setScene}
-                />
+                return <GachaSphere url={url} key={url + index} position={posRotList[index].pos} rotation={posRotList[index].rot} setScene={setScene} />
             })}
         </Suspense>
     )

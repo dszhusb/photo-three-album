@@ -1,14 +1,12 @@
 'use client'
 
 // import styles from './page.module.css'
-import { useState } from 'react'
-import * as THREE from 'three'
+import React, { useState } from "react"
 import { Canvas } from '@react-three/fiber'
-import { PerspectiveCamera, AccumulativeShadows, RandomizedLight } from '@react-three/drei'
-import { OrbitControls, Environment } from '@react-three/drei'
+import { OrbitControls, Environment, SoftShadows } from '@react-three/drei'
 import { useControls } from 'leva'
 
-import { randPos, randRot } from '../../components/CollectionUtils'
+import { randPos, randRot, randomDraw } from '../../components/CollectionUtils'
 import { Overlay } from '../../components/Overlay'
 
 import { GachaCube, CollectionCubes } from '../../components/GachaCube'
@@ -22,15 +20,27 @@ import { useContactMaterials } from '../../components/PhysicsMaterials'
 
 export default function Home() {
   const [scene, setScene] = useState({ name: "gacha", url: null, type: null })
-  const { color } = useControls({ color: "#5e66ff"})
+  const { color } = useControls({ color: "white" })
+  const { ...softConfig } = useControls({
+    size: { value: 25, min: 0, max: 100 },
+    focus: { value: 0, min: 0, max: 2 },
+    samples: { value: 10, min: 1, max: 20, step: 1 }
+  })
+
   return (
     <>
       <Canvas shadows camera={{ position: [0, 10, 10], fov: 30 }}>
         <color attach="background" args={[color]} />
-        <ChooseScene scene={scene} setScene={setScene} />
-        <AccumulativeShadows temporal frames={200} color={color} colorBlend={2} toneMapped={true} alphaTest={0.75} opacity={2} scale={25} position={[0, -0.99, 0]} >
-          <RandomizedLight intensity={Math.PI} amount={8} radius={4} ambient={0.5} position={[5, 10, -10]} bias={0.001} />
-        </AccumulativeShadows>
+        <ChooseScene scene={scene} setScene={setScene} color={color} />
+
+        <SoftShadows {...softConfig} />
+        <ambientLight intensity={0.5} />
+        <directionalLight castShadow position={[2.5, 8, 5]} intensity={1.5} shadow-mapSize={1024}>
+          <orthographicCamera attach="shadow-camera" args={[-10, 10, -10, 10, 0.1, 50]} />
+        </directionalLight>
+        <pointLight position={[-10, 0, -20]} color="white" intensity={1} />
+        <pointLight position={[0, -10, 0]} intensity={1} />
+
         <Environment preset="city" />
         <OrbitControls maxPolarAngle={Math.PI / 2} />
       </Canvas>
@@ -39,8 +49,8 @@ export default function Home() {
   )
 }
 
-function ChooseScene({ scene, setScene }) {
-  const urlList = ['/hair.png', '/lemon.png', '/clip.png', '/test.png']
+function ChooseScene({ scene, setScene, color }) {
+  const urlList = ['/9.JPG', '/10.JPG', '/11.JPG', '/12.JPG', '/13.JPG', '/14.JPG', '/15.JPG', '/16.JPG']
 
   let componentScene = <CollectionScene urlList={urlList} setScene={setScene} />
   if (scene.name === 'focus') { componentScene = <FocusScene url={scene.url} type={scene.type} setScene={setScene} /> }
@@ -49,6 +59,7 @@ function ChooseScene({ scene, setScene }) {
   return (
     <Physics>
       {componentScene}
+      <Ground position={[0, -1, 0]} color={color} />
     </Physics>
   )
 }
@@ -61,26 +72,25 @@ function FocusScene({ url, type, setScene }) {
   return (
     <group>
       <TexturedGround position={[0, 2, -5]} url={url} />
-      <Ground position={[0, -1, 0]} />
       {mesh}
     </group>
   )
 }
 
 function CollectionScene({ urlList, setScene }) {
-  let posRotList = []
-  for (let i = 0; i < urlList.length * 2; i++) {
-    posRotList.push({ pos: [randPos(), 3 + 2 * i, randPos()], rot: [randRot(), randRot(), randRot()] })
-  }
+  // let posRotList = []
+  // for (let i = 0; i < urlList.length * 2; i++) {
+  //   posRotList.push({ pos: [randPos(), 3 + 2 * i, randPos()], rot: [randRot(), randRot(), randRot()] })
+  // }
 
+  const gachas = randomDraw(urlList, 10, 3)
   useContactMaterials()
 
   return (
     <group>
-      <Ground position={[0, -1, 0]} />
-      <CollectionCubes urlList={urlList} setScene={setScene} posRotList={posRotList.slice(0, urlList.length)} />
-      <CollectionTetrahedrons urlList={urlList} setScene={setScene} posRotList={posRotList.slice(urlList.length)} />
-      <CollectionSpheres urlList={urlList} setScene={setScene} posRotList={posRotList.slice(urlList.length)} />
+      <CollectionCubes urlList={gachas.urls[0]} setScene={setScene} posRotList={gachas.positions[0]} />
+      <CollectionTetrahedrons urlList={gachas.urls[1]} setScene={setScene} posRotList={gachas.positions[1]} />
+      <CollectionSpheres urlList={gachas.urls[2]} setScene={setScene} posRotList={gachas.positions[2]} />
     </group>
   )
 }
