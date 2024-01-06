@@ -4,11 +4,14 @@ import { useLoader } from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { useBox } from '@react-three/cannon'
 import { cubeMaterial } from './PhysicsMaterials'
+import { PlasticMaterial } from './GachaMaterials'
+import { useHover } from './CollectionUtils'
 
 export { GachaCube, CollectionCubes }
 
-function GachaCube({ position, rotation, setScene, url }) {
-    const [ref] = useBox(() => ({ mass: 1, position: position, rotation: rotation, material: cubeMaterial }))
+function GachaCube({ position, rotation, setScene, url, isClickable, type }) {
+    const [scale, setScale] = useState(1)
+    const [ref] = useBox(() => ({ mass: 1, position: position, rotation: rotation, material: cubeMaterial, type: type }))
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
 
@@ -18,9 +21,9 @@ function GachaCube({ position, rotation, setScene, url }) {
     }
 
     const mesh =
-        <mesh ref={ref} castShadow receiveShadow onClick={() => handleClick()} >
+        <mesh scale={scale} ref={ref} castShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
             <boxGeometry />
-            <meshStandardMaterial map={colorMap} />
+            <PlasticMaterial colorMap={colorMap} />
         </mesh>
 
     return mesh
@@ -30,7 +33,8 @@ GachaCube.defaultProps = {
     position: [0, 1, 0],
     rotation: [0, 0, 0],
     isClickable: true,
-    url: 'images/placeholder.png'
+    url: 'images/placeholder.png',
+    type: "Dynamic"
 }
 
 GachaCube.propTypes = {
@@ -39,6 +43,7 @@ GachaCube.propTypes = {
     setScene: PropTypes.func,
     isClickable: PropTypes.bool,
     url: PropTypes.string,
+    type: PropTypes.string
 }
 
 function CollectionCubes({ urlList, setScene, posRotList }) {

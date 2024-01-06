@@ -5,12 +5,13 @@ import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { useConvexPolyhedron } from '@react-three/cannon'
 import { GlassMaterial } from './GachaMaterials'
 import { tetraMaterial } from './PhysicsMaterials'
+import { useHover } from './CollectionUtils'
 import { Geometry } from 'three-stdlib'
 import * as THREE from 'three'
 
 export { GachaTetrahedron, CollectionTetrahedrons }
 
-function GachaTetrahedron({ position, rotation, setScene, url }) {
+function GachaTetrahedron({ position, rotation, setScene, url, isClickable, type }) {
 
     const geo = useMemo(() => {
         const g = new THREE.TetrahedronGeometry()
@@ -19,7 +20,8 @@ function GachaTetrahedron({ position, rotation, setScene, url }) {
         return [geo.vertices.map((v) => [v.x, v.y, v.z]), geo.faces.map((f) => [f.a, f.b, f.c]), []]
     }, [])
 
-    const [ref] = useConvexPolyhedron(() => ({ mass: 1, position: position, rotation: rotation, material: tetraMaterial, args: geo }))
+    const [scale, setScale] = useState(1)
+    const [ref] = useConvexPolyhedron(() => ({ mass: 1, type: type, position: position, rotation: rotation, material: tetraMaterial, args: geo }))
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
     const material = <GlassMaterial colorMap={colorMap} />
@@ -30,7 +32,7 @@ function GachaTetrahedron({ position, rotation, setScene, url }) {
     }
 
     const mesh =
-        <mesh ref={ref} dispose={null} castShadow receiveShadow onClick={() => handleClick()} >
+        <mesh ref={ref} scale={scale} castShadow receiveShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
             <tetrahedronGeometry />
             {material}
         </mesh>
@@ -42,7 +44,8 @@ GachaTetrahedron.defaultProps = {
     position: [0, 1, 0],
     rotation: [0, 0, 0],
     isClickable: true,
-    url: 'images/placeholder.png'
+    url: 'images/placeholder.png',
+    type: "Dynamic"
 }
 
 GachaTetrahedron.propTypes = {
@@ -51,6 +54,7 @@ GachaTetrahedron.propTypes = {
     setScene: PropTypes.func,
     isClickable: PropTypes.bool,
     url: PropTypes.string,
+    type: PropTypes.string
 }
 
 function CollectionTetrahedrons({ urlList, setScene, posRotList }) {

@@ -2,11 +2,12 @@
 
 // import styles from './page.module.css'
 import React, { useState } from "react"
-import { Canvas } from '@react-three/fiber'
+import * as THREE from 'three'
+import { Canvas, useThree } from '@react-three/fiber'
 import { OrbitControls, Environment, SoftShadows } from '@react-three/drei'
 import { useControls } from 'leva'
 
-import { randPos, randRot, randomDraw } from '../../components/CollectionUtils'
+import { randomDraw } from '../../components/CollectionUtils'
 import { Overlay } from '../../components/Overlay'
 
 import { GachaCube, CollectionCubes } from '../../components/GachaCube'
@@ -54,7 +55,7 @@ function ChooseScene({ scene, setScene, color }) {
 
   let componentScene = <CollectionScene urlList={urlList} setScene={setScene} />
   if (scene.name === 'focus') { componentScene = <FocusScene url={scene.url} type={scene.type} setScene={setScene} /> }
-  else if (scene.name === 'gacha') { componentScene = <GachaScene setScene={setScene} /> }
+  else if (scene.name === 'gacha') { componentScene = <GachaScene setScene={setScene} urlList={urlList} /> }
 
   return (
     <Physics>
@@ -65,6 +66,7 @@ function ChooseScene({ scene, setScene, color }) {
 }
 
 function FocusScene({ url, type, setScene }) {
+  useThree(({ camera }) => { camera.position.set(0, 0, 10) })
   let mesh = null
   if (type === 'cube') { mesh = <GachaCube url={url} position={[0, 0, 0]} rotation={[0, 0, 0]} setScene={setScene} isClickable={false} /> }
   if (type === 'sphere') { mesh = <GachaSphere url={url} position={[0, 0, 0]} rotation={[0, 0, 0]} setScene={setScene} isClickable={false} /> }
@@ -78,12 +80,7 @@ function FocusScene({ url, type, setScene }) {
 }
 
 function CollectionScene({ urlList, setScene }) {
-  // let posRotList = []
-  // for (let i = 0; i < urlList.length * 2; i++) {
-  //   posRotList.push({ pos: [randPos(), 3 + 2 * i, randPos()], rot: [randRot(), randRot(), randRot()] })
-  // }
-
-  const gachas = randomDraw(urlList, 10, 3)
+  const gachas = randomDraw(urlList, 4, 3)
   useContactMaterials()
 
   return (
