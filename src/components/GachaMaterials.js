@@ -1,13 +1,12 @@
 import * as THREE from 'three'
-import concrete_normal from '%/images/concrete_normal.jpeg'
 import { MeshTransmissionMaterial, MeshDistortMaterial } from '@react-three/drei'
 
-export { DropletMaterial, GlassMaterial, CeramicMaterial, PlasticMaterial, Metal}
+export { DropletMaterial, GlassMaterial, CeramicMaterial, PlasticMaterial, Metal, Plastic}
 
 //GACHA MATERIALS
 function PlasticMaterial({ colorMap }) {
     const normalTexture = new THREE.TextureLoader().load("/images/streaked.jpeg")
-    return <meshPhongMaterial map={colorMap} specular="white" luminance={1} normalMap={normalTexture} normalScale={[1,0.5]} />
+    return <meshStandardMaterial map={colorMap} normalMap={normalTexture} normalScale={[1,0.5]} roughness={0} metalness={0.7} />
 }
 
 function DropletMaterial({ colorMap }) {
@@ -15,7 +14,11 @@ function DropletMaterial({ colorMap }) {
 }
 
 function GlassMaterial({ colorMap }) {
-    return <MeshTransmissionMaterial map={colorMap} resolution={1024} ior={1.5} clearcoat={1} roughness={0.1} distortion={1} thickness={0.5} opacity={0.5} backside />
+    return <MeshTransmissionMaterial map={colorMap} resolution={2048} clearcoat={0.5} distortion={1} thickness={0.5} backside chromaticAbberation={1} />
+}
+
+function CeramicMaterial({ colorMap }) {
+    return <meshToonMaterial map={colorMap} />
 }
 
 //GENERAL MATERIALS
@@ -23,6 +26,6 @@ function Metal({color}) {
     return <meshStandardMaterial metalness={1} roughness={0.1} color={color}/>
 }
 
-function CeramicMaterial({ colorMap }) {
-    
+function Plastic({color}) {
+    return <meshPhongMaterial shininess={1} />
 }

@@ -32,10 +32,12 @@ function GachaTetrahedron({ position, rotation, setScene, url, isClickable, type
     }
 
     const mesh =
-        <mesh ref={ref} scale={scale} castShadow receiveShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
-            <tetrahedronGeometry />
-            {material}
-        </mesh>
+        <group>
+            <mesh ref={ref} scale={scale} castShadow receiveShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
+                <tetrahedronGeometry />
+                {material}
+            </mesh>
+        </group>
 
     return mesh
 }
