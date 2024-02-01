@@ -1,18 +1,16 @@
 import PropTypes from 'prop-types'
 import { Suspense, useState } from 'react'
 import { useLoader } from '@react-three/fiber'
+import { RigidBody } from '@react-three/rapier'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
-import { useSphere } from '@react-three/cannon'
 import { DropletMaterial } from './GachaMaterials'
-import { sphereMaterial } from './PhysicsMaterials'
 import { useHover } from './CollectionUtils'
 
 export { GachaSphere, CollectionSpheres }
 
-function GachaSphere({ position, rotation, setScene, url, isClickable, type}) {
+function GachaSphere({ position, rotation, setScene, url, isClickable, type }) {
     const args = [0.6]
     const [scale, setScale] = useState(1)
-    const [ref] = useSphere(() => ({ mass: 1, type: type, position: position, rotation: rotation, material: sphereMaterial, angularDamping: 0.9, args: args }))
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
     const material = <DropletMaterial colorMap={colorMap} />
@@ -22,13 +20,14 @@ function GachaSphere({ position, rotation, setScene, url, isClickable, type}) {
         setScene({ name: 'focus', url: url, type: 'sphere' })
     }
 
-    const mesh =
-        <mesh ref={ref} scale={scale} castShadow receiveShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
-            <sphereGeometry args={args}/>
-            {material}
-        </mesh>
-
-    return mesh
+    return (
+        <RigidBody position={position} rotation={rotation} angularDamping={2.0}>
+            <mesh scale={scale} castShadow receiveShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
+                <sphereGeometry args={args} />
+                {material}
+            </mesh>
+        </RigidBody>
+    )
 }
 
 GachaSphere.defaultProps = {

@@ -1,19 +1,15 @@
 //GROUND COMPONENT
-import { usePlane } from '@react-three/cannon'
 import * as THREE from 'three'
-import { groundMaterial } from './PhysicsMaterials'
+import { RigidBody } from '@react-three/rapier'
 export { Ground }
 
-function Ground(props) {
-    const [ref] = usePlane(() => ({ rotation: [-Math.PI / 2, 0, 0], position: props.position, material: groundMaterial, ...props }))
-    const base = new THREE.Color(props.color)
-    const shadows = new THREE.Color(props.color).lerp(0.1)
+function Ground({ position, rotation}) {
     return (
-        <group>
-            <mesh ref={ref} receiveShadow >
+        <RigidBody position={position} rotation={rotation}>
+            <mesh receiveShadow>
                 <planeGeometry args={[50, 50]} />
                 <shadowMaterial transparent opacity={0.4} />
             </mesh>
-        </group>
+        </RigidBody>
     )
 }

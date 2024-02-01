@@ -1,5 +1,9 @@
-import { useCallback } from 'react'
-export { randPos, randRot, randomDraw, useHover }
+import { useCallback, useRef } from 'react'
+import { useControls } from 'leva'
+import { SoftShadows, useHelper } from '@react-three/drei'
+import { DirectionalLightHelper, PointLightHelper } from 'three'
+
+export { randPos, randRot, randomDraw, useHover, Lighting }
 
 function randPos(spread = 2) {
     return Math.random() * spread - spread / 2;
@@ -18,15 +22,15 @@ function randomDraw(urlList, nDraws, nTypes) {
         let i = Math.floor(Math.random() * nTypes)
         let j = Math.floor(Math.random() * urlList.length)
         urls[i].push(urlList.pop())
-        positions[i].push({ pos: [randPos(), 3 + n * 1.5, randPos()], rot: [randRot(), randRot(), randRot()] })
+        positions[i].push({ pos: [randPos(), 2 + n * 1.5, randPos()], rot: [randRot(), randRot(), randRot()] })
     }
 
     return { urls: urls, positions: positions }
 }
 
-function useHover(setScale, isClickable) {
-    const onPointerOver = useCallback(() => setScale(1.1), [])
-    const onPointerOut = useCallback(() => setScale(1), [])
+function useHover(setScale, isClickable, scale = [1.1, 1.1, 1.1]) {
+    const onPointerOver = useCallback(() => setScale(scale), [])
+    const onPointerOut = useCallback(() => setScale([1, 1, 1]), [])
     return isClickable && { onPointerOver, onPointerOut }
 }
 
@@ -47,3 +51,29 @@ function shuffle(array) {
 
     return array;
 }
+
+function Lighting() {
+    const { ...softConfig } = useControls({
+      size: { value: 25, min: 0, max: 100 },
+      focus: { value: 0, min: 0, max: 2 },
+      samples: { value: 10, min: 1, max: 20, step: 1 }
+    })
+  
+    const shadowLight = useRef()
+    const pointlight = useRef()
+    const pointlight2 = useRef()
+  
+    useHelper(shadowLight, DirectionalLightHelper, 0.5, "black")
+    useHelper(pointlight, PointLightHelper, 0.5, "blue")
+    useHelper(pointlight2, PointLightHelper, 0.5, "black")
+  
+    return (<>
+      <SoftShadows {...softConfig} />
+      <ambientLight intensity={0.5} color="#9778ff" />
+      <directionalLight color="#f5ecdf" castShadow position={[3, 8, 8]} intensity={10} shadow-mapSize={2048}>
+        <orthographicCamera attach="shadow-camera" args={[-10, 10, -10, 10, 0.1, 50]} />
+      </directionalLight>
+      <pointLight color="#ed9a6d" position={[-5, 2, -2]} intensity={5} />
+      <pointLight color="#7796fc" position={[5, 2, 0]} intensity={5} />
+    </>)
+  }

@@ -1,18 +1,16 @@
 import PropTypes from 'prop-types'
 import { Suspense, useState } from 'react'
 import { useLoader } from '@react-three/fiber'
+import { RigidBody } from '@react-three/rapier'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
-import { useCylinder } from '@react-three/cannon'
 import { PlasticMaterial } from './GachaMaterials'
-import { sphereMaterial } from './PhysicsMaterials'
 import { useHover } from './CollectionUtils'
 
 export { GachaCylinder, CollectionCylinders }
 
-function GachaCylinder({ position, rotation, setScene, url, isClickable, type}) {
+function GachaCylinder({ position, rotation, setScene, url, isClickable, type }) {
     const args = [0.5, 0.5, 1.5]
     const [scale, setScale] = useState(1)
-    const [ref] = useCylinder(() => ({ mass: 1, type: type, position: position, rotation: rotation, material: sphereMaterial, angularDamping: 0.9, args: args }))
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
     const material = <PlasticMaterial colorMap={colorMap} />
@@ -23,10 +21,12 @@ function GachaCylinder({ position, rotation, setScene, url, isClickable, type}) 
     }
 
     const mesh =
-        <mesh ref={ref} scale={scale} castShadow receiveShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
-            <cylinderGeometry args={args} />
-            {material}
-        </mesh>
+        <RigidBody position={position} rotation={rotation} angularDamping={1}>
+            <mesh scale={scale} castShadow receiveShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
+                <cylinderGeometry args={args} />
+                {material}
+            </mesh>
+        </RigidBody>
 
     return mesh
 }

@@ -1,31 +1,40 @@
 import { Suspense } from 'react'
 import { Ground } from './Ground'
-import { Physics } from '@react-three/cannon'
-import { Text3D, Center } from '@react-three/drei'
+import { Text3D, Center, Instances, Instance } from '@react-three/drei'
 import { GachaCube } from './GachaCube'
 import { GachaSphere } from './GachaSphere'
 import { GachaTetrahedron } from './GachaTetrahedron'
+import { GachaCylinder } from './GachaCylinder'
 
-import { Model, Machine } from './GachaMachine'
+import { Machine } from './GachaMachine'
 
 export { GachaScene }
 
 function GachaScene({ setScene, envTexture, urlList }) {
+    const doNothing = () => { console.log('naught') }
     return (
         <Suspense fallback={null}>
-            <Physics>
-                <Machine position={[0, -1, 0]} setScene={setScene} envTexture={envTexture} />
-                {/* <GachaCube url={urlList[0]} key={1} position={[0, 5.5, 0]} rotation={[0.2,0.5,0.3]} type={"Static"} setScene={setScene}/> */}
-                {/* <GachaSphere url={urlList[0]} key={1} position={[-2, 5.5, 1.2]} rotation={[0.2,0.5,0.3]} type={"Static"} setScene={{}}/> */}
-                <GachaTetrahedron url={urlList[0]} key={2} position={[0, 5, 3]} rotation={[0, 0, 0]} type={"Static"} setScene={setScene} />
-                <Ground position={[0, -1, 0]} />
-                <Center position={[0, 10, -5]}>
-                    <Text3D font="/fonts/PP_Hatton_Medium_Regular.json" size={3}>
-                        Pictopon*
-                        <meshStandardMaterial color="darkblue" />
-                    </Text3D>
-                </Center>
-            </Physics>
+            <Machine position={[0, -1, 0]} setScene={setScene} envTexture={envTexture} />
+
+            <GachaCube url={urlList[0]} key={0} position={[-2, 0, 0]} rotation={[0.2, 0.5, 0.3]} setScene={doNothing} />
+            <GachaCube url={urlList[0]} key={1} position={[2.5, 0, 1]} rotation={[0, 0.6, 0]} setScene={doNothing} />
+            <GachaCube url={urlList[0]} key={2} position={[-2.3, 0, 2]} rotation={[0.2, 0.5, 0.3]} setScene={doNothing} />
+
+            <GachaTetrahedron url={urlList[0]} key={4} position={[-3.5, 1, 1]} rotation={[0.2, 0, 0]} setScene={doNothing} />
+            <GachaTetrahedron url={urlList[0]} key={6} position={[1.7, 0, 2.8]} rotation={[0, 0, 0]} setScene={doNothing} />
+
+            <GachaSphere url={urlList[0]} key={5} position={[-1, 0, 3]} rotation={[0.2, 0.5, 0.3]} setScene={doNothing} />
+            <GachaSphere url={urlList[0]} key={9} position={[3.5, 0, 1]} rotation={[0.2, 0.5, 0.3]} setScene={doNothing} />
+
+            <GachaCylinder url={urlList[0]} key={7} position={[3, 1, 0]} rotation={[0, 0, Math.PI / 2]} setScene={doNothing} />
+            <GachaCylinder url={urlList[0]} key={8} position={[-2, 0, 0.8]} rotation={[0, 0, 0]} setScene={doNothing} />
+
+            <Center position={[0, 2, -2]}>
+                <Text3D font="/fonts/PP_Hatton_Medium_Regular.json" size={2}>
+                    {`Pictogem`}
+                    <meshStandardMaterial color="black" />
+                </Text3D>
+            </Center>
         </Suspense>
     )
 }
