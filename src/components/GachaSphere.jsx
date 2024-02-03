@@ -1,16 +1,15 @@
 import PropTypes from 'prop-types'
 import { Suspense, useState } from 'react'
 import { useLoader } from '@react-three/fiber'
-import { RigidBody } from '@react-three/rapier'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { DropletMaterial } from './GachaMaterials'
-import { useHover } from './CollectionUtils'
+import { useHover, MakeRigid, Annotation } from './CollectionUtils'
 
 export { GachaSphere, CollectionSpheres }
 
-function GachaSphere({ position, rotation, setScene, url, isClickable, type }) {
+function GachaSphere({ position, rotation, setScene, url, isClickable, physics }) {
     const args = [0.6]
-    const [scale, setScale] = useState(1)
+    const [scale, setScale] = useState([1, 1, 1])
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
     const material = <DropletMaterial colorMap={colorMap} />
@@ -20,14 +19,14 @@ function GachaSphere({ position, rotation, setScene, url, isClickable, type }) {
         setScene({ name: 'focus', url: url, type: 'sphere' })
     }
 
-    return (
-        <RigidBody position={position} rotation={rotation} angularDamping={2.0}>
-            <mesh scale={scale} castShadow receiveShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
-                <sphereGeometry args={args} />
-                {material}
-            </mesh>
-        </RigidBody>
-    )
+    const mesh =
+        <mesh scale={scale} castShadow receiveShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
+            <sphereGeometry args={args} />
+            {material}
+            {scale[0] !== 1 && <Annotation url={url} />}
+        </mesh>
+
+    return (physics ? MakeRigid(mesh, position, rotation, 1) : mesh)
 }
 
 GachaSphere.defaultProps = {
@@ -35,7 +34,7 @@ GachaSphere.defaultProps = {
     rotation: [0, 0, 0],
     isClickable: true,
     url: 'images/placeholder.png',
-    type: "Dynamic"
+    physics: true
 }
 
 GachaSphere.propTypes = {
@@ -44,7 +43,7 @@ GachaSphere.propTypes = {
     setScene: PropTypes.func,
     isClickable: PropTypes.bool,
     url: PropTypes.string,
-    type: PropTypes.string
+    physics: PropTypes.bool,
 }
 
 function CollectionSpheres({ urlList, setScene, posRotList }) {

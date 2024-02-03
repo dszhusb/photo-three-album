@@ -17,6 +17,7 @@ function GlassMaterial({ colorMap }) {
     return <MeshTransmissionMaterial
         background={colorMap}
         resolution={2048}
+        roughness={0.2}
         anisotropicBlur={0.5}
         temporalDistortion={0.05}
         distortionScale={1}

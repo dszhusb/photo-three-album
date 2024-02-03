@@ -5,7 +5,7 @@ import React, { useState, Suspense, useRef, useMemo } from "react"
 import * as THREE from 'three'
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
-import { OrbitControls, Environment, Loader, Bvh } from '@react-three/drei'
+import { Environment, Loader, Bvh, CameraControls } from '@react-three/drei'
 import { useControls } from 'leva'
 
 import { randomDraw, Lighting } from '../../components/CollectionUtils'
@@ -21,7 +21,9 @@ import { GachaScene } from '../../components/GachaScene'
 
 export default function Home() {
   const [scene, setScene] = useState({ name: "gacha", url: null, type: null })
-  const { color } = useControls({ color: "#e5dede" })
+  const urlList = ['/9.JPG', '/10.JPG', '/11.JPG', '/12.JPG', '/13.JPG', '/14.JPG', '/15.JPG', '/16.JPG', "17.jpg"]
+  const gachas = useMemo(() => { return randomDraw(urlList, 4, 4) })
+  const { color } = useControls({ color: "#aec5ff" })
 
   return (
     <div style={{ width: '100vw', height: '100vh', margin: 0 }}>
@@ -30,11 +32,11 @@ export default function Home() {
         <Lighting />
         <Bvh firstHitOnly>
           <Suspense fallback={null}>
-            <ChooseScene scene={scene} setScene={setScene} />
+            <ChooseScene scene={scene} setScene={setScene} gachas={gachas} urlList={urlList} />
           </Suspense>
         </Bvh>
         <Environment preset="studio" />
-        <OrbitControls maxPolarAngle={Math.PI / 2} />
+        <CameraControls makeDefault dollyToCursor minPolarAngle={0} maxPolarAngle={Math.PI / 2} maxZoom={10} />
       </Canvas>
       <Loader />
       <Overlay setScene={setScene} />
@@ -42,10 +44,9 @@ export default function Home() {
   )
 }
 
-function ChooseScene({ scene, setScene }) {
-  const urlList = ['/9.JPG', '/10.JPG', '/11.JPG', '/12.JPG', '/13.JPG', '/14.JPG', '/15.JPG', '/16.JPG', "17.jpg"]
+function ChooseScene({ scene, setScene, gachas, urlList }) {
 
-  let componentScene = <CollectionScene urlList={urlList} setScene={setScene} />
+  let componentScene = <CollectionScene gachas={gachas} setScene={setScene} />
   if (scene.name === 'focus') { componentScene = <FocusScene url={scene.url} type={scene.type} setScene={setScene} /> }
   else if (scene.name === 'gacha') { componentScene = <GachaScene setScene={setScene} urlList={urlList} /> }
 
@@ -71,8 +72,7 @@ function FocusScene({ url, type, setScene }) {
   )
 }
 
-function CollectionScene({ urlList, setScene }) {
-  const gachas = useMemo(() => { return randomDraw(urlList, 4, 4) })
+function CollectionScene({ setScene, gachas }) {
 
   return (
     <Suspense fallback={null}>

@@ -31,14 +31,16 @@ extend({ ImageMaterial })
 
 function TexturedGround(props) {
     const colorMap = useTexture(props.url)
+    const aspectX = Math.min(colorMap.image.width / colorMap.image.height, 1)
+    const aspectY = Math.min(colorMap.image.height / colorMap.image.width, 1)
     return (
         <group rotation={[-Math.PI / 6, 0, 0]} position={props.position}>
             <mesh position={[0, 0, 0.06]} >
-                <planeGeometry args={[4.75, 4.75]} />
+                <planeGeometry args={[4.75 * aspectX, 4.75 * aspectY]} />
                 <imageMaterial img={colorMap} />
             </mesh>
             <mesh castShadow>
-                <boxGeometry args={[5, 5, 0.1]} />
+                <boxGeometry args={[5 * aspectX, 5 * aspectY, 0.1]} />
                 <Metal />
             </mesh>
         </group>

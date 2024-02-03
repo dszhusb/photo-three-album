@@ -1,28 +1,31 @@
 import PropTypes from 'prop-types'
 import { Suspense, useState, useMemo, useRef } from 'react'
 import { extend, useFrame } from '@react-three/fiber'
-import { RigidBody } from '@react-three/rapier'
 import { PortalMaterial } from './GachaMaterials'
 import { useTexture } from '@react-three/drei'
-import { useHover } from './CollectionUtils'
+import { useHover, MakeRigid, Annotation } from './CollectionUtils'
 import * as THREE from 'three'
 
 extend({ PortalMaterial })
 export { GachaCube, CollectionCubes }
 
-function GachaCube({ position, rotation, setScene, url, isClickable, type, physics }) {
+function GachaCube({ position, rotation, setScene, url, isClickable, physics }) {
     const [clicked, click] = useState(false)
     const [scale, setScale] = useState([1, 1, 1])
     function handleClick() { click(!clicked); setScene({ name: 'focus', url: url, type: 'cube' }) }
     const properties = getCompoundStructure()
 
-    return (
-        <RigidBody position={position} rotation={rotation} onClick={() => handleClick()} scale={scale} {...useHover(setScale, isClickable)}>
-            {properties.structure.map(({ position: p, args }, i) => (
-                <Cubelet key={i} position={p} args={args} url={url} puzzle={properties.ids[i]} />
-            ))}
-        </RigidBody>
-    )
+    const mesh =
+        <group>
+            <group onClick={() => handleClick()} scale={scale} {...useHover(setScale, isClickable)}>
+                {properties.structure.map(({ position: p, args }, i) => (
+                    <Cubelet key={i} position={p} args={args} url={url} puzzle={properties.ids[i]} />
+                ))}
+            </group>
+            {scale[0] !== 1 && <Annotation url={url} />}
+        </group>
+
+    return (physics ? MakeRigid(mesh, position, rotation) : mesh)
 }
 
 GachaCube.defaultProps = {

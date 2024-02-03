@@ -1,34 +1,34 @@
 import PropTypes from 'prop-types'
-import { Suspense, useState } from 'react'
-import { useLoader } from '@react-three/fiber'
-import { RigidBody } from '@react-three/rapier'
+import { Suspense, useState, useRef } from 'react'
+import { useLoader, useThree } from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { PlasticMaterial } from './GachaMaterials'
-import { useHover } from './CollectionUtils'
+import { useHover, MakeRigid, Annotation } from './CollectionUtils'
 
 export { GachaCylinder, CollectionCylinders }
 
-function GachaCylinder({ position, rotation, setScene, url, isClickable, type }) {
+function GachaCylinder({ position, rotation, setScene, url, isClickable, physics }) {
     const args = [0.5, 0.5, 1.5]
-    const [scale, setScale] = useState(1)
+    const main = useRef()
+    const controls = useThree((state) => state.controls)
+    const [scale, setScale] = useState([1, 1, 1])
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
     const material = <PlasticMaterial colorMap={colorMap} />
 
     function handleClick() {
         click(!clicked)
-        setScene({ name: 'focus', url: url, type: 'cylinder' })
+        // setScene({ name: 'focus', url: url, type: 'cylinder' })
     }
 
     const mesh =
-        <RigidBody position={position} rotation={rotation} angularDamping={1}>
-            <mesh scale={scale} castShadow receiveShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
-                <cylinderGeometry args={args} />
-                {material}
-            </mesh>
-        </RigidBody>
+        <mesh ref={main} scale={scale} castShadow receiveShadow onClick={(e) => (e.stopPropagation(), controls.fitToBox(main.current, true))} onDoubleClick={() => handleClick()} {...useHover(setScale, isClickable)}>
+            <cylinderGeometry args={args} />
+            {material}
+            {scale[0] !== 1 && <Annotation url={url} />}
+        </mesh>
 
-    return mesh
+    return (physics ? MakeRigid(mesh, position, rotation, 1) : mesh)
 }
 
 GachaCylinder.defaultProps = {
@@ -36,7 +36,7 @@ GachaCylinder.defaultProps = {
     rotation: [0, 0, 0],
     isClickable: true,
     url: 'images/placeholder.png',
-    type: "Dynamic"
+    physics: true,
 }
 
 GachaCylinder.propTypes = {
@@ -45,7 +45,7 @@ GachaCylinder.propTypes = {
     setScene: PropTypes.func,
     isClickable: PropTypes.bool,
     url: PropTypes.string,
-    type: PropTypes.string
+    physics: PropTypes.bool,
 }
 
 function CollectionCylinders({ urlList, setScene, posRotList }) {

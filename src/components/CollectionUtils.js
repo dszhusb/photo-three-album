@@ -1,7 +1,9 @@
 import { useCallback, useRef } from 'react'
 import { useControls } from 'leva'
-import { SoftShadows, useHelper } from '@react-three/drei'
+import { SoftShadows, useHelper, Html } from '@react-three/drei'
+import { RigidBody } from '@react-three/rapier'
 import { DirectionalLightHelper, PointLightHelper } from 'three'
+import './3D_styles.css'
 
 export { randPos, randRot, randomDraw, useHover, Lighting }
 
@@ -29,8 +31,8 @@ function randomDraw(urlList, nDraws, nTypes) {
 }
 
 function useHover(setScale, isClickable, scale = [1.1, 1.1, 1.1]) {
-    const onPointerOver = useCallback(() => setScale(scale), [])
-    const onPointerOut = useCallback(() => setScale([1, 1, 1]), [])
+    const onPointerOver = useCallback((e) => { e.stopPropagation(); setScale(scale) }, [])
+    const onPointerOut = useCallback(() => { setScale([1, 1, 1]) }, [])
     return isClickable && { onPointerOver, onPointerOut }
 }
 
@@ -54,26 +56,40 @@ function shuffle(array) {
 
 function Lighting() {
     const { ...softConfig } = useControls({
-      size: { value: 25, min: 0, max: 100 },
-      focus: { value: 0, min: 0, max: 2 },
-      samples: { value: 10, min: 1, max: 20, step: 1 }
+        size: { value: 25, min: 0, max: 100 },
+        focus: { value: 0, min: 0, max: 2 },
+        samples: { value: 10, min: 1, max: 20, step: 1 }
     })
-  
+
     const shadowLight = useRef()
     const pointlight = useRef()
     const pointlight2 = useRef()
-  
+
     useHelper(shadowLight, DirectionalLightHelper, 0.5, "black")
     useHelper(pointlight, PointLightHelper, 0.5, "blue")
     useHelper(pointlight2, PointLightHelper, 0.5, "black")
-  
+
     return (<>
-      <SoftShadows {...softConfig} />
-      <ambientLight intensity={0.5} color="#9778ff" />
-      <directionalLight color="#f5ecdf" castShadow position={[3, 8, 8]} intensity={10} shadow-mapSize={2048}>
-        <orthographicCamera attach="shadow-camera" args={[-10, 10, -10, 10, 0.1, 50]} />
-      </directionalLight>
-      <pointLight color="#ed9a6d" position={[-5, 2, -2]} intensity={5} />
-      <pointLight color="#7796fc" position={[5, 2, 0]} intensity={5} />
+        <SoftShadows {...softConfig} />
+        <ambientLight intensity={0.5} color="#9778ff" />
+        <directionalLight color="#f5ecdf" castShadow position={[3, 8, 8]} intensity={10} shadow-mapSize={2048}>
+            <orthographicCamera attach="shadow-camera" args={[-10, 10, -10, 10, 0.1, 50]} />
+        </directionalLight>
+        <pointLight color="#ed9a6d" position={[-5, 2, -2]} intensity={5} />
+        <pointLight color="#7796fc" position={[5, 2, 0]} intensity={5} />
     </>)
-  }
+}
+
+export function MakeRigid(mesh, position, rotation, angularDamping = 0) {
+    return (<RigidBody position={position} rotation={rotation} angularDamping={angularDamping}>{mesh}</RigidBody>)
+}
+
+export function Annotation({ url }) {
+    return (
+        <Html distanceFactor={10}>
+            <div className="content">
+                <img src={url} alt='map source' />
+            </div>
+        </Html>
+    )
+}

@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types'
 import { Suspense, useState, useMemo } from 'react'
 import { useLoader } from '@react-three/fiber'
-import { RigidBody } from '@react-three/rapier'
+// import { RigidBody } from '@react-three/rapier'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { GlassMaterial } from './GachaMaterials'
-import { useHover } from './CollectionUtils'
+import { useHover, MakeRigid, Annotation } from './CollectionUtils'
 
 export { GachaTetrahedron, CollectionTetrahedrons }
 
-function GachaTetrahedron({ position, rotation, setScene, url, isClickable }) {
+function GachaTetrahedron({ position, rotation, setScene, url, isClickable, physics }) {
 
-    const [scale, setScale] = useState(1)
+    const [scale, setScale] = useState([1, 1, 1])
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
     const material = <GlassMaterial colorMap={colorMap} />
@@ -20,14 +20,14 @@ function GachaTetrahedron({ position, rotation, setScene, url, isClickable }) {
         setScene({ name: 'focus', url: url, type: 'tetrahedron' })
     }
 
-    return (
-        <RigidBody position={position} rotation={rotation}>
-            <mesh scale={scale} castShadow receiveShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
-                <tetrahedronGeometry />
-                {material}
-            </mesh>
-        </RigidBody>
-    )
+    const mesh =
+        <mesh scale={scale} castShadow receiveShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
+            <tetrahedronGeometry />
+            {material}
+            {scale[0] !== 1 && <Annotation url={url} />}
+        </mesh>
+
+    return (physics ? MakeRigid(mesh, position, rotation) : mesh)
 }
 
 GachaTetrahedron.defaultProps = {
@@ -35,6 +35,7 @@ GachaTetrahedron.defaultProps = {
     rotation: [0, 0, 0],
     isClickable: true,
     url: 'images/placeholder.png',
+    physics: true,
 }
 
 GachaTetrahedron.propTypes = {
@@ -43,6 +44,7 @@ GachaTetrahedron.propTypes = {
     setScene: PropTypes.func,
     isClickable: PropTypes.bool,
     url: PropTypes.string,
+    physics: PropTypes.bool,
 }
 
 function CollectionTetrahedrons({ urlList, setScene, posRotList }) {
