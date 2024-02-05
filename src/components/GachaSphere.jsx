@@ -1,18 +1,27 @@
 import PropTypes from 'prop-types'
-import { Suspense, useState } from 'react'
-import { useLoader } from '@react-three/fiber'
+import { Suspense, useState, useRef } from 'react'
+import { useLoader, useFrame } from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { DropletMaterial } from './GachaMaterials'
-import { useHover, MakeRigid, Annotation } from './CollectionUtils'
+import { useHover, MakeRigid } from './CollectionUtils'
+import { Outlines, useScroll } from '@react-three/drei'
 
 export { GachaSphere, CollectionSpheres }
 
 function GachaSphere({ position, rotation, setScene, url, isClickable, physics }) {
     const args = [0.6]
-    const [scale, setScale] = useState([1, 1, 1])
+    const [hovered, hover] = useState(false)
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
     const material = <DropletMaterial colorMap={colorMap} />
+
+    const group = useRef()
+    const data = useScroll()
+    useFrame(() => {
+        if (!physics) {
+            group.current.rotation.y = data.offset
+        }
+    })
 
     function handleClick() {
         click(!clicked)
@@ -20,13 +29,13 @@ function GachaSphere({ position, rotation, setScene, url, isClickable, physics }
     }
 
     const mesh =
-        <mesh scale={scale} castShadow receiveShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
+        <mesh castShadow receiveShadow onClick={() => handleClick()} {...useHover(hover, isClickable)}>
             <sphereGeometry args={args} />
             {material}
-            {scale[0] !== 1 && <Annotation url={url} />}
+            {hovered && <Outlines thickness={0.05} color='white' />}
         </mesh>
 
-    return (physics ? MakeRigid(mesh, position, rotation, 1) : mesh)
+    return (physics ? MakeRigid(mesh, position, rotation, 1) : <group ref={group} position={position} rotation={rotation}>{mesh}</group>)
 }
 
 GachaSphere.defaultProps = {

@@ -13,6 +13,7 @@ h1 {
     font-weight: 500;
     font-size: 20rem;
     margin: 0 0 10rem 0;
+    color: black;
 }
 
 p {
@@ -23,84 +24,84 @@ p {
 
 @font-face {
     font-family: 'Hatton';
-    src: url('../fonts/PPHatton-Bold.otf');
+    src: url('/fonts/PPHatton-Bold.otf');
     font-weight: 700;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Hatton';
-    src: url('../fonts/PPHatton-BoldItalic.otf');
+    src: url('/fonts/PPHatton-BoldItalic.otf');
     font-weight: 700;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Hatton';
-    src: url('../fonts/PPHatton-Medium.otf');
+    src: url('/fonts/PPHatton-Medium.otf');
     font-weight: 500;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Hatton';
-    src: url('../fonts/PPHatton-MediumItalic.otf');
+    src: url('/fonts/PPHatton-MediumItalic.otf');
     font-weight: 500;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Hatton';
-    src: url('../fonts/PPHatton-Ultralight.otf');
+    src: url('/fonts/PPHatton-Ultralight.otf');
     font-weight: 200;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Hatton';
-    src: url('../fonts/PPHatton-UltralightItalic.otf');
+    src: url('/fonts/PPHatton-UltralightItalic.otf');
     font-weight: 200;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'RadioGrotesk';
-    src: url('../fonts/PPRadioGrotesk-Black.otf');
+    src: url('/fonts/PPRadioGrotesk-Black.otf');
     font-weight: 900;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'RadioGrotesk';
-    src: url('../fonts/PPRadioGrotesk-BlackItalic.otf');
+    src: url('/fonts/PPRadioGrotesk-BlackItalic.otf');
     font-weight: 900;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'RadioGrotesk';
-    src: url('../fonts/PPRadioGrotesk-Regular.otf');
+    src: url('/fonts/PPRadioGrotesk-Regular.otf');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'RadioGrotesk';
-    src: url('../fonts/PPRadioGrotesk-RegularItalic.otf');
+    src: url('/fonts/PPRadioGrotesk-RegularItalic.otf');
     font-weight: 400;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'RadioGrotesk';
-    src: url('../fonts/PPRadioGrotesk-Ultralight.otf');
+    src: url('/fonts/PPRadioGrotesk-Ultralight.otf');
     font-weight: 200;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'RadioGrotesk';
-    src: url('../fonts/PPRadioGrotesk-UltralightItalic.otf');
+    src: url('/fonts/PPRadioGrotesk-UltralightItalic.otf');
     font-weight: 200;
     font-style: italic;
 }

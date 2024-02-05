@@ -30,9 +30,9 @@ function randomDraw(urlList, nDraws, nTypes) {
     return { urls: urls, positions: positions }
 }
 
-function useHover(setScale, isClickable, scale = [1.1, 1.1, 1.1]) {
-    const onPointerOver = useCallback((e) => { e.stopPropagation(); setScale(scale) }, [])
-    const onPointerOut = useCallback(() => { setScale([1, 1, 1]) }, [])
+function useHover(hover, isClickable) {
+    const onPointerOver = useCallback((e) => { e.stopPropagation(); hover(true) }, [])
+    const onPointerOut = useCallback(() => { hover(false) }, [])
     return isClickable && { onPointerOver, onPointerOut }
 }
 

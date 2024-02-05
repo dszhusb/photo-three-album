@@ -1,34 +1,41 @@
 import PropTypes from 'prop-types'
 import { Suspense, useState, useRef } from 'react'
-import { useLoader, useThree } from '@react-three/fiber'
+import { useLoader, useFrame } from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { PlasticMaterial } from './GachaMaterials'
-import { useHover, MakeRigid, Annotation } from './CollectionUtils'
+import { useHover, MakeRigid } from './CollectionUtils'
+import { Outlines, useScroll } from '@react-three/drei'
 
 export { GachaCylinder, CollectionCylinders }
 
 function GachaCylinder({ position, rotation, setScene, url, isClickable, physics }) {
     const args = [0.5, 0.5, 1.5]
-    const main = useRef()
-    const controls = useThree((state) => state.controls)
-    const [scale, setScale] = useState([1, 1, 1])
+    const [hovered, hover] = useState(false)
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
     const material = <PlasticMaterial colorMap={colorMap} />
 
+    const group = useRef()
+    const data = useScroll()
+    useFrame(() => {
+        if (!physics) {
+            group.current.rotation.y = data.offset
+        }
+    })
+
     function handleClick() {
         click(!clicked)
-        // setScene({ name: 'focus', url: url, type: 'cylinder' })
+        setScene({ name: 'focus', url: url, type: 'cylinder' })
     }
 
     const mesh =
-        <mesh ref={main} scale={scale} castShadow receiveShadow onClick={(e) => (e.stopPropagation(), controls.fitToBox(main.current, true))} onDoubleClick={() => handleClick()} {...useHover(setScale, isClickable)}>
+        <mesh castShadow receiveShadow onClick={() => handleClick()} {...useHover(hover, isClickable)}>
             <cylinderGeometry args={args} />
             {material}
-            {scale[0] !== 1 && <Annotation url={url} />}
+            {hovered && <Outlines thickness={0.04} color="white" opacity={1} />}
         </mesh>
 
-    return (physics ? MakeRigid(mesh, position, rotation, 1) : mesh)
+    return (physics ? MakeRigid(mesh, position, rotation, 1) : <group ref={group} position={position} rotation={rotation}>{mesh}</group>)
 }
 
 GachaCylinder.defaultProps = {

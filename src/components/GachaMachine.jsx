@@ -1,7 +1,8 @@
-import React, { useState, Suspense, useMemo } from "react"
+import React, { useState } from "react"
 import * as THREE from 'three'
-import { useGLTF, MeshTransmissionMaterial } from "@react-three/drei"
-import { Plastic, Glass } from './GachaMaterials'
+import { useGLTF, MeshTransmissionMaterial, Outlines, MeshDiscardMaterial } from "@react-three/drei"
+import { Plastic } from './GachaMaterials'
+import { useHover } from './CollectionUtils'
 
 export function Machine(props) {
     const { nodes, materials } = useGLTF("/models/gachaMachine.glb")
@@ -66,6 +67,7 @@ export function Machine(props) {
                 <Plastic color={'#efefef'} />
             </mesh>
             <mesh
+                {...useHover(hover, true)}
                 onClick={() => handleClick()}
                 castShadow
                 receiveShadow
@@ -76,6 +78,11 @@ export function Machine(props) {
                 scale={0.75}
             >
                 <Plastic color={'white'} />
+            </mesh>
+            <mesh position={[0, 1.57, -1.08]} rotation={[Math.PI / 2, 0, 0]}>
+                <cylinderGeometry args={[0.3, 0.3, 0.02]} />
+                <MeshDiscardMaterial />
+                {hovered && <Outlines color={'white'} />}
             </mesh>
             <mesh
                 castShadow

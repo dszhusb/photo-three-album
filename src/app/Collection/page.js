@@ -5,7 +5,7 @@ import React, { useState, Suspense, useRef, useMemo } from "react"
 import * as THREE from 'three'
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
-import { Environment, Loader, Bvh, CameraControls } from '@react-three/drei'
+import { OrbitControls, Environment, Loader, Bvh } from '@react-three/drei'
 import { useControls } from 'leva'
 
 import { randomDraw, Lighting } from '../../components/CollectionUtils'
@@ -27,7 +27,7 @@ export default function Home() {
 
   return (
     <div style={{ width: '100vw', height: '100vh', margin: 0 }}>
-      <Canvas shadows camera={{ position: [-20, 15, 25], fov: 30 }} linear >
+      <Canvas shadows camera={{ position: [-20, 15, 25], fov: 30 }} linear>
         <color attach="background" args={[color]} />
         <Lighting />
         <Bvh firstHitOnly>
@@ -36,7 +36,7 @@ export default function Home() {
           </Suspense>
         </Bvh>
         <Environment preset="studio" />
-        <CameraControls makeDefault dollyToCursor minPolarAngle={0} maxPolarAngle={Math.PI / 2} maxZoom={10} />
+        <OrbitControls maxPolarAngle={Math.PI/9*4} minPolarAngle={Math.PI/8} maxDistance={30} minDistance={5} enableDamping damping={0.2} />
       </Canvas>
       <Loader />
       <Overlay setScene={setScene} />

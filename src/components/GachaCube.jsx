@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
-import { Suspense, useState, useMemo, useRef } from 'react'
+import { Suspense, useState, useRef } from 'react'
 import { extend, useFrame } from '@react-three/fiber'
 import { PortalMaterial } from './GachaMaterials'
-import { useTexture } from '@react-three/drei'
-import { useHover, MakeRigid, Annotation } from './CollectionUtils'
+import { useTexture, Outlines, MeshDiscardMaterial, useScroll } from '@react-three/drei'
+import { useHover, MakeRigid } from './CollectionUtils'
 import * as THREE from 'three'
 
 extend({ PortalMaterial })
@@ -11,21 +11,29 @@ export { GachaCube, CollectionCubes }
 
 function GachaCube({ position, rotation, setScene, url, isClickable, physics }) {
     const [clicked, click] = useState(false)
-    const [scale, setScale] = useState([1, 1, 1])
+    const [hovered, hover] = useState(false)
     function handleClick() { click(!clicked); setScene({ name: 'focus', url: url, type: 'cube' }) }
     const properties = getCompoundStructure()
 
+    const group = useRef()
+    const data = useScroll()
+    useFrame(() => {
+        if (!physics) { group.current.rotation.y = data.offset * 3 }
+    })
+
     const mesh =
-        <group>
-            <group onClick={() => handleClick()} scale={scale} {...useHover(setScale, isClickable)}>
-                {properties.structure.map(({ position: p, args }, i) => (
-                    <Cubelet key={i} position={p} args={args} url={url} puzzle={properties.ids[i]} />
-                ))}
-            </group>
-            {scale[0] !== 1 && <Annotation url={url} />}
+        <group onClick={() => handleClick()} {...useHover(hover, isClickable)}>
+            {properties.structure.map(({ position: p, args }, i) => (
+                <Cubelet key={i} position={p} args={args} url={url} puzzle={properties.ids[i]} />
+            ))}
+            <mesh position={[-0.25, -0.25, -0.25]}>
+                <boxGeometry args={[1, 1, 1]} />
+                <MeshDiscardMaterial />
+                {hovered && <Outlines thickness={0.05} color='white' />}
+            </mesh>
         </group>
 
-    return (physics ? MakeRigid(mesh, position, rotation) : mesh)
+    return (physics ? MakeRigid(mesh, position, rotation) : <group ref={group} position={position} rotation={rotation}>{mesh}</group>)
 }
 
 GachaCube.defaultProps = {

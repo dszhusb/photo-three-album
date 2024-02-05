@@ -1,19 +1,25 @@
 import PropTypes from 'prop-types'
-import { Suspense, useState, useMemo } from 'react'
-import { useLoader } from '@react-three/fiber'
-// import { RigidBody } from '@react-three/rapier'
+import { Suspense, useState, useRef } from 'react'
+import { useLoader, useFrame } from '@react-three/fiber'
 import { TextureLoader } from 'three/src/loaders/TextureLoader'
 import { GlassMaterial } from './GachaMaterials'
-import { useHover, MakeRigid, Annotation } from './CollectionUtils'
+import { useHover, MakeRigid } from './CollectionUtils'
+import { Outlines, useScroll } from '@react-three/drei'
 
 export { GachaTetrahedron, CollectionTetrahedrons }
 
 function GachaTetrahedron({ position, rotation, setScene, url, isClickable, physics }) {
 
-    const [scale, setScale] = useState([1, 1, 1])
+    const [hovered, hover] = useState(false)
     const [clicked, click] = useState(false)
     const colorMap = useLoader(TextureLoader, url)
     const material = <GlassMaterial colorMap={colorMap} />
+
+    const group = useRef()
+    const data = useScroll()
+    useFrame(() => {
+        if (!physics) { group.current.rotation.y = data.offset * 3 }
+    })
 
     function handleClick() {
         click(!clicked)
@@ -21,13 +27,13 @@ function GachaTetrahedron({ position, rotation, setScene, url, isClickable, phys
     }
 
     const mesh =
-        <mesh scale={scale} castShadow receiveShadow onClick={() => handleClick()} {...useHover(setScale, isClickable)}>
+        <mesh castShadow receiveShadow onClick={() => handleClick()} {...useHover(hover, isClickable)}>
             <tetrahedronGeometry />
             {material}
-            {scale[0] !== 1 && <Annotation url={url} />}
+            {hovered && <Outlines thickness={0.05} color='white' />}
         </mesh>
 
-    return (physics ? MakeRigid(mesh, position, rotation) : mesh)
+    return (physics ? MakeRigid(mesh, position, rotation) : <group ref={group} position={position} rotation={rotation}>{mesh}</group>)
 }
 
 GachaTetrahedron.defaultProps = {
