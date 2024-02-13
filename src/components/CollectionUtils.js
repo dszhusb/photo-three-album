@@ -1,8 +1,9 @@
 import { useCallback, useRef } from 'react'
 import { useControls } from 'leva'
-import { SoftShadows, useHelper, Html } from '@react-three/drei'
+import { SoftShadows, useHelper, Html, Bvh, Environment, OrbitControls } from '@react-three/drei'
 import { RigidBody } from '@react-three/rapier'
 import { DirectionalLightHelper, PointLightHelper } from 'three'
+import { Suspense } from 'react'
 import './3D_styles.css'
 
 export { randPos, randRot, randomDraw, useHover, Lighting }
@@ -55,11 +56,11 @@ function shuffle(array) {
 }
 
 function Lighting() {
-    const { ...softConfig } = useControls({
-        size: { value: 25, min: 0, max: 100 },
-        focus: { value: 0, min: 0, max: 2 },
-        samples: { value: 10, min: 1, max: 20, step: 1 }
-    })
+    // const { ...softConfig } = useControls({
+    //     size: { value: 25, min: 0, max: 100 },
+    //     focus: { value: 0, min: 0, max: 2 },
+    //     samples: { value: 10, min: 1, max: 20, step: 1 },
+    // })
 
     const shadowLight = useRef()
     const pointlight = useRef()
@@ -69,15 +70,28 @@ function Lighting() {
     useHelper(pointlight, PointLightHelper, 0.5, "blue")
     useHelper(pointlight2, PointLightHelper, 0.5, "black")
 
-    return (<>
-        <SoftShadows {...softConfig} />
-        <ambientLight intensity={0.5} color="#9778ff" />
-        <directionalLight color="#f5ecdf" castShadow position={[3, 8, 8]} intensity={10} shadow-mapSize={2048}>
-            <orthographicCamera attach="shadow-camera" args={[-10, 10, -10, 10, 0.1, 50]} />
-        </directionalLight>
-        <pointLight color="#ed9a6d" position={[-5, 2, -2]} intensity={5} />
-        <pointLight color="#7796fc" position={[5, 2, 0]} intensity={5} />
-    </>)
+    return (
+        <>
+            <SoftShadows />
+            <ambientLight intensity={0.5} color="#9778ff" />
+            <directionalLight color="#f5ecdf" castShadow position={[3, 8, 8]} intensity={10} shadow-mapSize={2048}>
+                <orthographicCamera attach="shadow-camera" args={[-10, 10, -10, 10, 0.1, 50]} />
+            </directionalLight>
+            <pointLight color="#ed9a6d" position={[-5, 2, -2]} intensity={5} />
+            <pointLight color="#7796fc" position={[5, 2, 0]} intensity={5} />
+        </>
+    )
+}
+
+export function BasicLighting() {
+    return (
+        <>
+            <ambientLight intensity={0.5} color="#9778ff" />
+            <directionalLight color="#f5ecdf" position={[3, 5, 5]} intensity={10} />
+            {/* <pointLight color="#ed9a6d" position={[-5, 2, -2]} intensity={5} />
+            <pointLight color="#7796fc" position={[5, 2, 0]} intensity={5} /> */}
+        </>
+    )
 }
 
 export function MakeRigid(mesh, position, rotation, angularDamping = 0) {
@@ -91,5 +105,23 @@ export function Annotation({ url }) {
                 <img src={url} alt='map source' />
             </div>
         </Html>
+    )
+}
+
+export function Common({ children }) {
+    const color = "#aec5ff"
+    return (
+        <>
+            <color attach="background" args={[color]} />
+            <Lighting />
+            <Bvh firstHitOnly>
+                <Suspense fallback={null}>
+                    {children}
+                </Suspense>
+            </Bvh>
+            <Environment preset="studio" />
+            <OrbitControls maxPolarAngle={Math.PI / 9 * 4} minPolarAngle={Math.PI / 8} maxDistance={30} minDistance={5} enableDamping damping={0.2} />
+            {/* <Loader /> */}
+        </>
     )
 }

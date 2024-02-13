@@ -1,52 +1,89 @@
-"use client"
+'use client'
 import styles from './page.module.css'
-import Link from 'next/link'
+import { useMediaQuery } from 'react-responsive'
 
-import { useRef } from 'react'
-import { Canvas, useThree, useFrame } from '@react-three/fiber'
-import { Text, Scroll, ScrollControls, Preload } from '@react-three/drei'
+import { Suspense } from 'react'
+import * as THREE from 'three'
+import { OrthographicCamera } from '@react-three/drei'
 
-import { Lighting } from '../components/CollectionUtils'
-import { GachaSphere } from '../components/GachaSphere'
-import { GachaTetrahedron } from '../components/GachaTetrahedron'
-import { GachaCube } from '../components/GachaCube'
+import { BasicLighting } from '../components/CollectionUtils'
+import { GachaCylinder } from '../components/capsules/GachaCylinder'
+import { GachaSphere } from '../components/capsules/GachaSphere'
+import { GachaTetrahedron } from '../components/capsules/GachaTetrahedron'
+import { GachaCube } from '../components/capsules/GachaCube'
+import { useRouter } from 'next/navigation'
+import { Overlay } from '@/components/Overlay'
+
+import dynamic from 'next/dynamic'
+const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.View), { ssr: false })
 
 export default function App() {
+  const color = "#aec5ff"
+  const isLarge = useMediaQuery({ minWidth: 1024 })
+  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 })
+  const isMobile = useMediaQuery({ maxWidth: 767 })
+
   return (
-    <Canvas linear camera={{ position: [0, 0, 20], fov: 15 }} style={{ height: '100vh' }}>
-      <ScrollControls damping={0.5} pages={2}>
-        <Type />
-        <Objects />
-        <Lighting />
-        <Preload />
-      </ScrollControls>
-    </Canvas>
+    <div style={{ position: 'relative', width: '100%', height: '100%', margin: 0 }}>
+      <View style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+        <color attach="background" args={[color]} />
+      </View>
+      <Type isTablet={isTablet} isMobile={isMobile} />
+      {isLarge && <Objects />}
+      <Overlay />
+    </div>
   )
 }
 
-function Type() {
-  const { width, height } = useThree((state) => state.viewport)
-  const header = { font: '/fonts/PPHatton-Medium.otf', color: "black" }
+function Type({ isTablet, isMobile }) {
+
+  const widths = [['80vw', '80vw', '80vw'], ['60vw', '60vw', '60vw'], ['38vw', '40vw', '30vw']]
+  const xPos = [['10vw', '10vw', '10vw'], ['10vw', '35vw', '15vw'], ['20vw', '40vw', '30vw']]
+  const hSizes = [0.4, 0.7, 1]
+  const router = useRouter()
+
+  let ws = widths[2]; let xs = xPos[2]; let h = hSizes[2]
+  if (isTablet) { ws = widths[1]; xs = xPos[1]; h = hSizes[1] }
+  else if (isMobile) { ws = widths[0]; xs = xPos[0]; h = hSizes[0] }
+
   return (
-    <Scroll style={{ width: '100%' }}>
-      <Text children="Pictogem" anchorX="center" position={[0, height / 3, 0]} {...header} />
-      {/* <p className={styles.p}>Welcome to Pictopon - an amalgam of “pictus” from the Latin “to draw” and “gachapon” a style of Japanese collectable vending machine toy. Each day, presenting a new photo rewards you with time capsules from the past, previous pictures mapped onto the shapes of flickering cubes, jelly-like droplets, and more!</p>
-      <p className={styles.p}>Pictopon emerged from an early exploration of 3D learning. As new 3D modelers quickly learn, wrapping a raw 2D image onto a 3D form often distorts the image in strange and unintended ways. But instead of seeing the bulges and seams as a mistake, I found in the weirdness a source of delight! Pictopon ignores a lesson in UV mapping, casting a common mistake as the central source of novelty. The challenge became manipulating shape and material in ways that instead of reading as a mistake, refreshes old memories with new life.</p>
-      <p className={styles.p}>This project is built with React, Three.js, React Three Fiber, and more. It is my first foray into the world of developing 3D experiences for web, shaders, as well as an exercise in my graphic design and UI skills. I hope you enjoy the following prototype!</p>
-      <Link href='/Collection'>Collection</Link> */}
-    </Scroll>
+    <>
+      <h1 style={{ margin: 'auto', width: 'fit-content' }}>Pictogem</h1>
+      <p style={{ marginLeft: xs[0], maxWidth: ws[0] }} className={styles.p}>Pictogem is a <a className={styles.a} href='https://en.wikipedia.org/wiki/Gashapon#Gacha_mechanic_(gacha_games)'>gacha</a> style photo album experience. Each day, presenting a new photo rewards you with time capsules from the past, previous pictures mapped onto the shapes of flickering cubes, jelly-like droplets, and more!</p>
+      <p style={{ marginLeft: xs[1], maxWidth: ws[1] }} className={styles.p}>Wrapping an image around a 3D form can distort the image in strange and unintended ways. But instead of viewing bulges and seams as a mistake, the distortions can be a source of delight! Pictogem ignores a lesson in UV mapping, casting a common mistake as the central source of novelty. The challenge became manipulating shape and material in ways that instead of reading as a mistake, refreshes old memories with new life.</p>
+      <p style={{ marginLeft: xs[2], maxWidth: ws[2] }} className={styles.p}>This project is built with React, Three.js, React Three Fiber, and more. It is my first foray into the world of developing 3D experiences for web, shaders, as well as an exercise in my graphic design and UI skills. I hope you enjoy the following prototype!</p>
+      <div className={'toSite'} style={{ margin: 'auto', marginTop: '10rem', position: 'relative' }} onClick={() => { router.push('/Machine') }}><h1 style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)', position: 'absolute', color: 'white', margin: 0, fontSize: `${3 * h}vw` }}>GO!</h1></div>
+      <div style={{ height: '10rem', width: '100%' }} />
+    </>
   )
 }
 
 function Objects() {
-  const doNothing = () => { console.log('naught') }
-  const { width, height } = useThree((state) => state.viewport)
   return (
-    <Scroll>
-      <group>
-        <GachaCube url={'/9.JPG'} physics={false} position={[width / 4, height / 5, 0]} setScene={doNothing} rotation={[0, Math.PI / 3, 0]} isClickable={false} />
-        <GachaTetrahedron url={'/10.JPG'} physics={false} position={[0, -height, 0]} setScene={doNothing} rotation={[0, 0, 0.4]} isClickable={false} />
-      </group>
-    </Scroll>
+    <>
+      <MakeView size='40rem' top={'15%'} left={'60vw'}>
+        <GachaTetrahedron url={'/10.JPG'} physics={false} position={[0, 0, 0]} rotation={[0, 0, 0.4]} isClickable={false} />
+      </MakeView>
+      <MakeView size='40rem' top={'65%'} left={'60vw'}>
+        <GachaCylinder url={'/15.JPG'} physics={false} position={[0, 0, 0]} rotation={[0, 0, Math.PI / 3]} isClickable={false} />
+      </MakeView>
+      <MakeView size='40rem' top={'40%'} left={'15%'}>
+        <GachaSphere url={'/11.JPG'} physics={false} position={[0, 0, 0]} rotation={[0.7, 0, 0.2]} isClickable={false} />
+      </MakeView>
+    </>
+  )
+}
+
+function MakeView({ size, top, left, children }) {
+  const color = "#aec5ff"
+  return (
+    <View style={{ position: 'absolute', width: size, height: size, top: top, left: left }}>
+      <color attach="background" args={[color]} />
+      <OrthographicCamera makeDefault position={[0, 0, 1.5]} zoom={200} />
+      <Suspense fallback={null}>
+        {children}
+        <BasicLighting />
+      </Suspense>
+    </View>
   )
 }

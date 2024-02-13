@@ -2,24 +2,34 @@ import PropTypes from 'prop-types'
 import { Suspense, useState, useRef } from 'react'
 import { extend, useFrame } from '@react-three/fiber'
 import { PortalMaterial } from './GachaMaterials'
-import { useTexture, Outlines, MeshDiscardMaterial, useScroll } from '@react-three/drei'
-import { useHover, MakeRigid } from './CollectionUtils'
+import { useTexture, Outlines, MeshDiscardMaterial } from '@react-three/drei'
+import { useHover, MakeRigid } from '../CollectionUtils'
+import { useRouter } from 'next/navigation'
+import { useStore } from '@/store/zustand'
 import * as THREE from 'three'
 
 extend({ PortalMaterial })
 export { GachaCube, CollectionCubes }
 
-function GachaCube({ position, rotation, setScene, url, isClickable, physics }) {
-    const [clicked, click] = useState(false)
+function GachaCube({ position, rotation, url, isClickable, physics }) {
     const [hovered, hover] = useState(false)
-    function handleClick() { click(!clicked); setScene({ name: 'focus', url: url, type: 'cube' }) }
+    const [clicked, click] = useState(false)
     const properties = getCompoundStructure()
+    const router = useRouter()
+    const { setCapsule } = useStore()
 
     const group = useRef()
-    const data = useScroll()
-    useFrame(() => {
-        if (!physics) { group.current.rotation.y = data.offset * 3 }
+    useFrame(({ clock }) => {
+        if (!physics) { group.current.rotation.y = clock.getElapsedTime() }
     })
+
+    function handleClick() {
+        click(!clicked)
+        if (isClickable) {
+            setCapsule({ url: url, type: 'cube'})
+            router.push('/Capsule')
+        }
+    }
 
     const mesh =
         <group onClick={() => handleClick()} {...useHover(hover, isClickable)}>
@@ -47,7 +57,6 @@ GachaCube.defaultProps = {
 GachaCube.propTypes = {
     position: PropTypes.arrayOf(PropTypes.number),
     rotation: PropTypes.arrayOf(PropTypes.number),
-    setScene: PropTypes.func,
     isClickable: PropTypes.bool,
     url: PropTypes.string,
     physics: PropTypes.bool,
@@ -87,7 +96,7 @@ function Cubelet({ position, url, puzzle, args }) {
     )
 }
 
-function CollectionCubes({ urlList, setScene, posRotList }) {
+function CollectionCubes({ urlList, posRotList }) {
     return (
         <Suspense fallback={null}>
             {urlList.map((url, index) => {
@@ -96,7 +105,6 @@ function CollectionCubes({ urlList, setScene, posRotList }) {
                     key={url + index}
                     position={posRotList[index].pos}
                     rotation={posRotList[index].rot}
-                    setScene={setScene}
                 />
             })}
         </Suspense>

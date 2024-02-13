@@ -19,7 +19,46 @@ h1 {
 p {
     font-family: 'RadioGrotesk';
     font-weight: 400;
-    font-size: 5rem;
+    font-size: 3rem;
+    padding-top: 10rem;
+}
+
+@media screen and (max-width: 1024px) {
+    h1{
+        font-size: 15rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    h1 {
+        font-size: 8rem;
+    }
+    p {
+        font-size: 2.5rem;
+        padding-top: 6rem;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    h1 {
+        font-size: 5rem;
+    }
+    p {
+        font-size: 2rem;
+        padding-top: 0.5rem;
+    }
+}
+
+a:visited {
+    color: 'black';
+}
+
+.toSite {
+    width: 20rem;
+    height: 20rem;
+    border-radius: 10rem;
+    position: relative;
+    background-color: black;
 }
 
 @font-face {

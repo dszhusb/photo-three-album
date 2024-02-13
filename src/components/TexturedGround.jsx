@@ -1,7 +1,7 @@
 //GROUND COMPONENT
 import { extend } from '@react-three/fiber'
 import { shaderMaterial, useTexture } from '@react-three/drei'
-import { Metal } from './GachaMaterials'
+import { Metal } from './capsules/GachaMaterials'
 export { TexturedGround }
 
 const ImageMaterial = shaderMaterial(

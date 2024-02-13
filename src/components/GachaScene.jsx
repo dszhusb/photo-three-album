@@ -1,10 +1,9 @@
 import { Suspense } from 'react'
-import { Ground } from './Ground'
-import { Text3D, Center, Instances, Instance } from '@react-three/drei'
-import { GachaCube } from './GachaCube'
-import { GachaSphere } from './GachaSphere'
-import { GachaTetrahedron } from './GachaTetrahedron'
-import { GachaCylinder } from './GachaCylinder'
+import { Text3D, Center } from '@react-three/drei'
+import { GachaCube } from './capsules/GachaCube'
+import { GachaSphere } from './capsules/GachaSphere'
+import { GachaTetrahedron } from './capsules/GachaTetrahedron'
+import { GachaCylinder } from './capsules/GachaCylinder'
 
 import { Machine } from './GachaMachine'
 

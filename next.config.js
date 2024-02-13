@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+    compiler: {
+        styledComponents: true,
+    },
     transpilePackages: ['three'],
     webpack(config, { isServer }) {
         // Allow importing of shader files (e.g. `.glsl` -- filenames below)

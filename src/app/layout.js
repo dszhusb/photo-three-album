@@ -1,4 +1,6 @@
 import './globals.css'
+import { Layout } from '@/components/dom/Layout'
+import StyledComponentsRegistry from '../lib/registry'
 
 export const metadata = {
   title: 'Pictogem',
@@ -8,7 +10,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <StyledComponentsRegistry><Layout>{children}</Layout></StyledComponentsRegistry>
+      </body>
     </html>
   )
 }

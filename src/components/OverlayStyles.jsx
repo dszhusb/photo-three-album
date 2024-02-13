@@ -2,7 +2,7 @@ import styled from 'styled-components'
 export { OverlayContainer, OverlayButton }
 
 const OverlayContainer = styled.div`
-    position: absolute;
+    position: fixed;
     top: 40px;
     left: 40px;
     display: grid;
@@ -14,4 +14,5 @@ const OverlayButton = styled.button`
     color: black;
     padding: 10px 20px 10px 20px;
     font-size: 13px
+    font-family: 'Hatton';
 `

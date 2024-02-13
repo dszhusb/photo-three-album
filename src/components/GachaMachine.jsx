@@ -1,18 +1,20 @@
 import React, { useState } from "react"
 import * as THREE from 'three'
-import { useGLTF, MeshTransmissionMaterial, Outlines, MeshDiscardMaterial } from "@react-three/drei"
-import { Plastic } from './GachaMaterials'
+import { useGLTF, MeshTransmissionMaterial, Outlines, MeshDiscardMaterial, extend } from "@react-three/drei"
+import { useRouter } from 'next/navigation'
+import { Plastic } from './capsules/GachaMaterials'
 import { useHover } from './CollectionUtils'
 
 export function Machine(props) {
     const { nodes, materials } = useGLTF("/models/gachaMachine.glb")
+    const router = useRouter()
 
     const [hovered, hover] = useState(false)
     const [clicked, click] = useState(false)
 
     function handleClick() {
         click(!clicked)
-        props.setScene({ name: 'collection' })
+        router.push('/Collection')
     }
 
     return (
