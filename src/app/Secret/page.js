@@ -6,7 +6,7 @@ import Image from 'next/image'
 
 export default function Page() {
     const { setUrlList } = useStore()
-    const urlList = ['/victoria/1.JPG', '/victoria/2.JPG', '/victoria/3.JPG', '/victoria/4.JPG', '/victoria/5.JPG', '/victoria/6.JPG', '/victoria/7.jpg', '/victoria/8.jpg', '/victoria/9.jpg', '/victoria/10.jpg', '/victoria/11.jpg', '/victoria/12.jpg']
+    const urlList = ['/victoria/1.JPG', '/victoria/2.JPG', '/victoria/3.JPG', '/victoria/4.JPG', '/victoria/5.jpg', '/victoria/6.jpg', '/victoria/7.JPG', '/victoria/8.jpg', '/victoria/9.jpg', '/victoria/10.jpg', '/victoria/11.jpg', '/victoria/12.jpg']
     const router = useRouter()
     const c = "#e04e43"
 
