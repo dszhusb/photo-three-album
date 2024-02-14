@@ -3,14 +3,12 @@ import styles from './page.module.css'
 import { useMediaQuery } from 'react-responsive'
 
 import { Suspense } from 'react'
-import * as THREE from 'three'
 import { OrthographicCamera } from '@react-three/drei'
 
 import { BasicLighting } from '../components/CollectionUtils'
 import { GachaCylinder } from '../components/capsules/GachaCylinder'
 import { GachaSphere } from '../components/capsules/GachaSphere'
 import { GachaTetrahedron } from '../components/capsules/GachaTetrahedron'
-import { GachaCube } from '../components/capsules/GachaCube'
 import { useRouter } from 'next/navigation'
 import { Overlay } from '@/components/Overlay'
 
@@ -19,7 +17,6 @@ const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.
 
 export default function App() {
   const color = "#aec5ff"
-  const isLarge = useMediaQuery({ minWidth: 1024 })
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 })
   const isMobile = useMediaQuery({ maxWidth: 767 })
 
@@ -30,7 +27,7 @@ export default function App() {
           <color attach="background" args={[color]} />
         </View>
         <Type isTablet={isTablet} isMobile={isMobile} />
-        {isLarge && <Objects />}
+        <Objects />
         <Overlay back={false} />
       </div>
     </Suspense>

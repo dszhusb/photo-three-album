@@ -1,11 +1,11 @@
 'use client'
 
 // import styles from './page.module.css'
-import React, { useState, Suspense, useMemo } from "react"
+import React, { Suspense } from "react"
 import * as THREE from 'three'
 import { Physics } from '@react-three/rapier'
 
-import { RandomDraw, Lighting, Common } from '../../components/CollectionUtils'
+import { RandomDraw, Common } from '../../components/CollectionUtils'
 import { Overlay } from '../../components/Overlay'
 
 import { CollectionCubes } from '../../components/capsules/GachaCube'
