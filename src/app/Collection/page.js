@@ -5,7 +5,7 @@ import React, { useState, Suspense, useMemo } from "react"
 import * as THREE from 'three'
 import { Physics } from '@react-three/rapier'
 
-import { randomDraw, Lighting, Common } from '../../components/CollectionUtils'
+import { RandomDraw, Lighting, Common } from '../../components/CollectionUtils'
 import { Overlay } from '../../components/Overlay'
 
 import { CollectionCubes } from '../../components/capsules/GachaCube'
@@ -18,7 +18,7 @@ import dynamic from 'next/dynamic'
 const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.View), { ssr: false })
 
 export default function Home() {
-  const gachas = randomDraw(4, 4)
+  const gachas = RandomDraw(4, 4)
 
   return (
     <>

@@ -7,7 +7,7 @@ import { Suspense } from 'react'
 import { useStore } from '@/store/zustand'
 import './3D_styles.css'
 
-export { randPos, randRot, randomDraw, useHover, Lighting }
+export { randPos, randRot, RandomDraw, useHover, Lighting }
 
 function randPos(spread = 2) {
     return Math.random() * spread - spread / 2;
@@ -17,7 +17,7 @@ function randRot() {
     return Math.random() * 2 * Math.PI;
 }
 
-function randomDraw(nDraws, nTypes) {
+function RandomDraw(nDraws, nTypes) {
     const { urlList } = useStore()
     let list = JSON.parse(JSON.stringify(urlList))
     let urls = []; let positions = []
