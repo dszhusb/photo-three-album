@@ -4,6 +4,7 @@ import { SoftShadows, useHelper, Html, Bvh, Environment, OrbitControls } from '@
 import { RigidBody } from '@react-three/rapier'
 import { DirectionalLightHelper, PointLightHelper } from 'three'
 import { Suspense } from 'react'
+import { useStore } from '@/store/zustand'
 import './3D_styles.css'
 
 export { randPos, randRot, randomDraw, useHover, Lighting }
@@ -16,15 +17,17 @@ function randRot() {
     return Math.random() * 2 * Math.PI;
 }
 
-function randomDraw(urlList, nDraws, nTypes) {
+function randomDraw(nDraws, nTypes) {
+    const { urlList } = useStore()
+    let list = JSON.parse(JSON.stringify(urlList))
     let urls = []; let positions = []
     for (let i = 0; i < nTypes; i++) { urls.push([]); positions.push([]) }
-    urlList = shuffle(urlList)
+    list = shuffle(list)
 
     for (let n = 0; n < nDraws; n++) {
         let i = Math.floor(Math.random() * nTypes)
-        let j = Math.floor(Math.random() * urlList.length)
-        urls[i].push(urlList.pop())
+        let j = Math.floor(Math.random() * list.length)
+        urls[i].push(list.pop())
         positions[i].push({ pos: [randPos(), 2 + n * 1.5, randPos()], rot: [randRot(), randRot(), randRot()] })
     }
 
@@ -56,12 +59,6 @@ function shuffle(array) {
 }
 
 function Lighting() {
-    // const { ...softConfig } = useControls({
-    //     size: { value: 25, min: 0, max: 100 },
-    //     focus: { value: 0, min: 0, max: 2 },
-    //     samples: { value: 10, min: 1, max: 20, step: 1 },
-    // })
-
     const shadowLight = useRef()
     const pointlight = useRef()
     const pointlight2 = useRef()
@@ -88,8 +85,8 @@ export function BasicLighting() {
         <>
             <ambientLight intensity={0.5} color="#9778ff" />
             <directionalLight color="#f5ecdf" position={[3, 5, 5]} intensity={10} />
-            {/* <pointLight color="#ed9a6d" position={[-5, 2, -2]} intensity={5} />
-            <pointLight color="#7796fc" position={[5, 2, 0]} intensity={5} /> */}
+            <pointLight color="#ed9a6d" position={[2, -3, 1]} intensity={5} />
+            <pointLight color="#7796fc" position={[-2, -3, 1]} intensity={5} />
         </>
     )
 }
@@ -121,7 +118,6 @@ export function Common({ children }) {
             </Bvh>
             <Environment preset="studio" />
             <OrbitControls maxPolarAngle={Math.PI / 9 * 4} minPolarAngle={Math.PI / 8} maxDistance={30} minDistance={5} enableDamping damping={0.2} />
-            {/* <Loader /> */}
         </>
     )
 }

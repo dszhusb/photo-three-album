@@ -24,14 +24,16 @@ export default function App() {
   const isMobile = useMediaQuery({ maxWidth: 767 })
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', margin: 0 }}>
-      <View style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-        <color attach="background" args={[color]} />
-      </View>
-      <Type isTablet={isTablet} isMobile={isMobile} />
-      {isLarge && <Objects />}
-      <Overlay />
-    </div>
+    <Suspense fallback={null}>
+      <div style={{ position: 'relative', width: '100%', height: '100%', margin: 0 }}>
+        <View style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+          <color attach="background" args={[color]} />
+        </View>
+        <Type isTablet={isTablet} isMobile={isMobile} />
+        {isLarge && <Objects />}
+        <Overlay back={false} />
+      </div>
+    </Suspense>
   )
 }
 

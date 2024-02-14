@@ -18,8 +18,7 @@ import dynamic from 'next/dynamic'
 const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.View), { ssr: false })
 
 export default function Home() {
-  const urlList = ['/9.JPG', '/10.JPG', '/11.JPG', '/12.JPG', '/13.JPG', '/14.JPG', '/15.JPG', '/16.JPG', "17.jpg"]
-  const gachas = useMemo(() => { return randomDraw(urlList, 4, 4) })
+  const gachas = randomDraw(4, 4)
 
   return (
     <>
