@@ -10,7 +10,7 @@ export default function Scene({ ...props }) {
   const [dpr, setDpr] = useState(1.5)
   return (
     <>
-      <Canvas {...props} dpr={dpr} camera={{ position: [0, 0, 20], fov: 15 }} shadows linear>
+      <Canvas {...props} dpr={dpr} camera={{ position: [0, 0, 20], fov: 15 }} linear shadows>
         <PerformanceMonitor onIncline={() => setDpr(2)} onDecline={() => setDpr(1)} />
         <r3f.Out />
         <Preload all />

@@ -16,7 +16,7 @@ import dynamic from 'next/dynamic'
 const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.View), { ssr: false })
 
 export default function App() {
-  const color = "#aec5ff"
+  const color =  "#bac8ff" //"#aec5ff"
   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 })
   const isMobile = useMediaQuery({ maxWidth: 767 })
 
@@ -74,7 +74,7 @@ function Objects() {
 }
 
 function MakeView({ size, top, left, children }) {
-  const color = "#aec5ff"
+  const color = "#bac8ff"
   return (
     <View style={{ position: 'absolute', width: size, height: size, top: top, left: left }}>
       <color attach="background" args={[color]} />

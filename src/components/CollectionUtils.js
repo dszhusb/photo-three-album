@@ -83,7 +83,7 @@ function Lighting() {
 export function BasicLighting() {
     return (
         <>
-            <ambientLight intensity={0.5} color="#9778ff" />
+            <ambientLight intensity={0.5} color="#bac8ff" />
             <directionalLight color="#f5ecdf" position={[3, 5, 5]} intensity={10} />
             <pointLight color="#ed9a6d" position={[2, -3, 1]} intensity={5} />
             <pointLight color="#7796fc" position={[-2, -3, 1]} intensity={5} />
@@ -105,7 +105,7 @@ export function Annotation({ url }) {
     )
 }
 
-export function Common({ children, color = "#aec5ff" }) {
+export function Common({ children, color = "#bac8ff" }) {
     return (
         <>
             <color attach="background" args={[color]} />

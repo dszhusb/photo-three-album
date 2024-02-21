@@ -2,35 +2,40 @@ import styled from 'styled-components'
 
 export const OverlayContainer = styled.div`
     position: fixed;
-    top: 4rem;
-    left: 4rem;
-    overflow: hidden;
-`
+    top: 0;
+    left: 0;
 
-export const OverlayButton = styled.button`
-    display: block;
-    padding: 1rem 2rem 1rem 2rem;
-    margin-right: 1rem;
-    float: left;
+    padding: 1rem;
+    margin: 2rem;
 
-    font-family: 'Hatton';
-    font-size: 2rem;
-    color: black;
-
-    background: none;
-    border: 1.5px solid black;
+    width: fit-content;
     border-radius: 3rem;
+    background-color: black;
 `
 
 export const LinksContainer = styled.div`
     position: fixed;
-    top: 3rem;
-    right: 3rem;
-    overflow: hidden;
+    top: 0;
+    right: 0;
+    padding: 1rem;
+    margin: 2rem;
+    width: fit-content;
+`
+
+export const OverlayButton = styled.button`
+    display: block;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    float: left;
+
+    font-family: 'RadioGrotesk';
+    font-weight: 200;
+    font-size: 1.5rem;
+    color: white;
+    background: none;
+    border: none;
 `
 
 export const LogoLink = styled.a`
-    width: fit-content;
+    padding: 0rem 0.5rem 0rem 0.5rem;
     float: right;
-    margin-left: 1rem;
 `
