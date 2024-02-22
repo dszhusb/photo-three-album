@@ -105,7 +105,8 @@ export function Annotation({ url }) {
     )
 }
 
-export function Common({ children, color = "#bac8ff" }) {
+//"#bac8ff"
+export function Common({ children, color = '#9a9dab' }) {
     return (
         <>
             <color attach="background" args={[color]} />

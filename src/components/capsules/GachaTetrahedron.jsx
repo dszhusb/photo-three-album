@@ -26,8 +26,8 @@ function GachaTetrahedron({ position, rotation, url, isClickable, physics }) {
     function handleClick() {
         click(!clicked)
         if (isClickable) {
-            setCapsule({ url: url, type: 'tetrahedron'})
             router.push('/Capsule')
+            setCapsule({ url: url, type: 'tetrahedron'})
         }
     }
 

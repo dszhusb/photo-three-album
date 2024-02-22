@@ -29,8 +29,8 @@ function GachaSphere({ position, rotation, url, isClickable, physics }) {
     function handleClick() {
         click(!clicked)
         if (isClickable) {
-            setCapsule({ url: url, type: 'sphere'})
             router.push('/Capsule')
+            setCapsule({ url: url, type: 'sphere'})
         }
     }
 

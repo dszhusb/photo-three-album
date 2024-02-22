@@ -21,7 +21,7 @@ export default function Home() {
   const gachas = RandomDraw(4, 4)
 
   return (
-    <>
+    <Suspense fallback={null}>
       <View style={{ width: '100vw', height: '100vh', margin: 0 }}>
         <Common>
           <Physics colliders='hull'>
@@ -36,6 +36,6 @@ export default function Home() {
         </Common>
       </View>
       <Overlay />
-    </>
+    </Suspense>
   )
 }

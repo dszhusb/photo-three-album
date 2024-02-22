@@ -27,8 +27,8 @@ function GachaCylinder({ position, rotation, url, isClickable, physics }) {
     function handleClick() {
         click(!clicked)
         if (isClickable) {
-            setCapsule({ url: url, type: 'cylinder' })
             router.push('/Capsule')
+            setCapsule({ url: url, type: 'cylinder' })
         }
     }
 

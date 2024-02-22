@@ -24,7 +24,7 @@ export default function Page() {
     if (capsule.type === 'cylinder') { mesh = <GachaCylinder url={capsule.url} position={[0, 1, 0]} rotation={[0, 0, Math.PI / 3]} isClickable={false} /> }
 
     return (
-        <>
+        <Suspense fallback={null}>
             <View style={{ width: '100vw', height: '100vh', margin: 0 }}>
                 <Common>
                     <Physics colliders='hull'>
@@ -37,6 +37,6 @@ export default function Page() {
                 </Common>
             </View>
             <Overlay />
-        </>
+        </Suspense>
     )
 }
