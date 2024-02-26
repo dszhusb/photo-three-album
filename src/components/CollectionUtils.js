@@ -106,7 +106,7 @@ export function Annotation({ url }) {
 }
 
 //"#bac8ff"
-export function Common({ children, color = '#9a9dab' }) {
+export function Common({ children, color = '#9a9dab', stopHorizontal = false }) {
     return (
         <>
             <color attach="background" args={[color]} />
@@ -117,7 +117,7 @@ export function Common({ children, color = '#9a9dab' }) {
                 </Suspense>
             </Bvh>
             <Environment preset="studio" />
-            <OrbitControls maxPolarAngle={Math.PI / 9 * 4} minPolarAngle={Math.PI / 8} maxDistance={30} minDistance={5} enableDamping damping={0.2} />
+            <OrbitControls minAzimuthAngle={-Math.PI / 2} maxAzimuthAngle={Math.PI / 2} maxPolarAngle={Math.PI / 9 * 4} minPolarAngle={Math.PI / 8} maxDistance={30} minDistance={5} enableDamping damping={0.2} />
         </>
     )
 }

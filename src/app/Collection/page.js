@@ -21,9 +21,9 @@ export default function Home() {
   const gachas = RandomDraw(4, 4)
 
   return (
-    <Suspense fallback={null}>
+    <>
       <View style={{ width: '100vw', height: '100vh', margin: 0 }}>
-        <Common>
+        <Common stopHorizontal={true}>
           <Physics colliders='hull'>
             <Suspense fallback={null}>
               <CollectionCubes urlList={gachas.urls[0]} posRotList={gachas.positions[0]} />
@@ -36,6 +36,6 @@ export default function Home() {
         </Common>
       </View>
       <Overlay />
-    </Suspense>
+    </>
   )
 }
