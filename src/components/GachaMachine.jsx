@@ -56,7 +56,7 @@ export function Machine(props) {
                 position={[0, 3, -0.95]}
                 scale={[1.25, 1, 0.85]}
             >
-                <MeshTransmissionMaterial samples={10} resolution={1024} distortion={0.25} color="#9ccdff" thickness={1} anisotropy={1} chromaticAbberation={1} />
+                <MeshTransmissionMaterial samples={10} resolution={1024} distortion={0.25} color="#9ccdff" thickness={1} anisotropicBlur={1} chromaticAbberation={2} temporalDistortion={0.1} />
             </mesh>
             <mesh
                 castShadow
